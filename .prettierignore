@@ -1,0 +1,7 @@
+pnpm-lock.yaml
+LICENSE
+NOTICE
+# Reference output is compared byte for byte.
+fixtures/
+# Docs are hand-formatted; padded tables make review diffs noisy.
+*.md

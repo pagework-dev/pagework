@@ -1,0 +1,14 @@
+{
+  "name": "@pagework/templates",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Script template schema, loader, inheritance and validation.",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --project ."
+  }
+}
