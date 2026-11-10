@@ -1,0 +1,41 @@
+Pagework
+Copyright (C) 2026 Connor McMahon and Pagework contributors
+
+This program is free software: you can redistribute it and/or modify it
+under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, version 3 of the License only.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+
+Additional terms under section 7 of the GNU AGPL v3
+---------------------------------------------------
+
+(b) Author attribution. Any version of this program that is conveyed or
+    made available to users over a network must keep, in its "About"
+    screen or an equivalent place reachable from its user interface, the
+    following notice:
+
+        Based on Pagework by Connor McMahon and contributors.
+        https://pagework.dev
+
+    You may add your own name and notices next to it.
+
+(e) Trademarks. This licence does not grant any right to use the name
+    "Pagework" or any Pagework logo, except as needed to give the notice
+    above and to describe the origin of the work truthfully. A modified
+    version must be published under a different name.
+
+
+Third-party components
+----------------------
+
+Third-party components and fonts included in this repository keep their
+own licences. They are listed in THIRD_PARTY_NOTICES (added once the
+first dependency is vendored).
