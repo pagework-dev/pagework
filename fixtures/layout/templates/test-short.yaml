@@ -1,0 +1,14 @@
+# Short pages so the layout fixtures reach page breaks quickly. Everything
+# not set here comes from screenplay-us.
+schema: 1
+id: test-short
+name: Short pages (layout tests)
+extends: screenplay-us
+page:
+  size: { width: 8.5in, height: 3.5in } # 1 in margins leave nine body lines
+elements:
+  dual_dialogue:
+    gap: 0.4in # columns of 28 characters, so the text picture lines up
+title_page:
+  center:
+    top: 1.5in # the base value is below the bottom of this short page

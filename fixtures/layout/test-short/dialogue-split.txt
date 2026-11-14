@@ -1,0 +1,13 @@
+=== page 1 ===
+06|               INT. HALL - DAY
+08|               Footsteps.
+10|                                     TOM
+11|                         Line one of the speech.
+12|                         Line two of the speech.
+13|                         Line three of the speech.
+14|                                     (MORE)
+=== page 2 ===
+03|                                                                         2.
+06|                                     TOM (CONT'D)
+07|                         Line four of the speech.
+08|                         Line five of the speech.

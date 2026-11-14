@@ -1,0 +1,5 @@
+=== page 1 ===
+06|       1       INT. HOUSE - DAY                                                1
+08|               They sit.
+10|       2       EXT. GARDEN - DAY                                               2
+12|               They stand.
