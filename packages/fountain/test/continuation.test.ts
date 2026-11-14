@@ -2,11 +2,14 @@
 import { describe, expect, it } from "vitest";
 import { removeContinuationMarkers } from "../src/index.ts";
 
-const source = import.meta.glob<string>("../../../fixtures/fountain/continuation-markers.fountain", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-});
+const source = import.meta.glob<string>(
+  "../../../fixtures/fountain/continuation-markers.fountain",
+  {
+    query: "?raw",
+    import: "default",
+    eager: true,
+  },
+);
 
 describe("removeContinuationMarkers (ADR 0011)", () => {
   it("removes typed markers of all three kinds and keeps content extensions", () => {
@@ -53,7 +56,10 @@ describe("removeContinuationMarkers (ADR 0011)", () => {
 
   it("leaves a script without markers unchanged", () => {
     const plain = "INT. HALL - DAY\n\nTOM (V.O.)\nHello.\n";
-    expect(removeContinuationMarkers(plain)).toEqual({ text: plain, removed: [] });
+    expect(removeContinuationMarkers(plain)).toEqual({
+      text: plain,
+      removed: [],
+    });
   });
 
   it("is idempotent", () => {
