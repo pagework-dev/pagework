@@ -8,6 +8,9 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "noEmit": true,
+    // Node strips types but cannot compile enums, namespaces or parameter
+    // properties; keep to syntax it can run.
+    "erasableSyntaxOnly": true,
     // Relative imports name the .ts file so Node can run sources directly
     // (type stripping) for the CLI and debug commands, with no build step.
     "allowImportingTsExtensions": true,
