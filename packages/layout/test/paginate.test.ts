@@ -119,6 +119,23 @@ describe("paginate", () => {
     expect(text).toBe("=== page 1 ===\n06|               Shown.\n");
   });
 
+  it("keeps the two bottom title page areas apart", () => {
+    const long = "word ".repeat(20).trim();
+    const model = paginate(
+      parse(`Title: T\nContact: ${long}\nDraft date: ${long}\n\nAction.`),
+      short,
+    );
+    const cover = model.pages[0];
+    const middle = 108 + (612 - 108 - 72) / 2;
+    for (const line of cover?.lines ?? []) {
+      if (line.y < 150) continue; // only the bottom areas
+      const end =
+        line.x + line.spans.reduce((n, s) => n + s.text.length, 0) * 7.1953125;
+      if (line.x < middle) expect(end).toBeLessThanOrEqual(middle);
+      else expect(line.x).toBeGreaterThanOrEqual(middle);
+    }
+  });
+
   it("rejects a base template", () => {
     expect(() => paginate([], { ...short, abstract: true })).toThrow(
       /base template/,

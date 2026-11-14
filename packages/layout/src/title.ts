@@ -19,7 +19,11 @@ function areaLines(
 ): { spans: Span[]; x: number }[][] {
   const t = g.template;
   const style = t.titlePage?.title;
-  const max = Math.floor(g.textWidth / g.charWidth + 1e-9);
+  // The two bottom areas share their lines, so each gets half the width,
+  // less one character between them.
+  const width =
+    placement === "center" ? g.textWidth : g.textWidth / 2 - g.charWidth;
+  const max = Math.floor(width / g.charWidth + 1e-9);
   const blocks: { spans: Span[]; x: number }[][] = [];
   for (const name of area.fields) {
     let content = fields.get(name);
