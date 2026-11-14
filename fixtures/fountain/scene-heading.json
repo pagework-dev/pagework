@@ -7,5 +7,5 @@
   {"type": "scene_heading", "lines": [11, 11], "content": [{"text": "EST. CITY SKYLINE - DUSK"}], "sceneNumber": null, "forced": false},
   {"type": "scene_heading", "lines": [13, 13], "content": [{"text": "EXT BEACH - DAY"}], "sceneNumber": null, "forced": false},
   {"type": "action", "lines": [15, 15], "content": [{"text": "INTERIOR DESIGNERS ARGUE."}], "forced": false},
-  {"type": "action", "lines": [17, 18], "content": [{"text": "INT. HALLWAY - NIGHT\nNobody is here."}], "forced": false}
+  {"type": "action", "lines": [17, 18], "content": [{"text": "int. hallway - night\nNobody is here."}], "forced": false}
 ]
