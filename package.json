@@ -14,7 +14,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "parse": "node apps/cli/src/parse.ts"
+    "parse": "node apps/cli/src/parse.ts",
+    "templates:test": "vitest run --project @pagework/templates"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
