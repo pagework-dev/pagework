@@ -14,26 +14,37 @@ function pagesOf(source: string): string[] {
 }
 
 describe("wrapText", () => {
+  const line = (start: number, end: number, indent = 0) => ({
+    start,
+    end,
+    indent,
+  });
+
   it("breaks at the last space that fits", () => {
-    expect(wrapText("aaa bbb ccc", 7)).toEqual([
-      [0, 7],
-      [8, 11],
-    ]);
+    expect(wrapText("aaa bbb ccc", 7)).toEqual([line(0, 7), line(8, 11)]);
   });
 
   it("breaks a word longer than the line", () => {
     expect(wrapText("abcdefghij", 4)).toEqual([
-      [0, 4],
-      [4, 8],
-      [8, 10],
+      line(0, 4),
+      line(4, 8),
+      line(8, 10),
     ]);
   });
 
   it("keeps hard line breaks and does not break inside a leading indent", () => {
     expect(wrapText("    abcdef\nxy", 6)).toEqual([
-      [0, 6],
-      [6, 10],
-      [11, 13],
+      line(0, 6),
+      line(6, 10),
+      line(11, 13),
+    ]);
+  });
+
+  it("lines up wrapped lines under the indent", () => {
+    expect(wrapText("  aaa bbb ccc", 8)).toEqual([
+      line(0, 5),
+      line(6, 9, 2),
+      line(10, 13, 2),
     ]);
   });
 });
