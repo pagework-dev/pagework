@@ -4,7 +4,8 @@
  * value is checked against the font file in packages/pdf.
  */
 const ADVANCE: Record<string, number> = {
-  "Courier Prime": 0.6,
+  // 1228 of 2048 font units for every glyph (hmtx table of all four styles).
+  "Courier Prime": 1228 / 2048,
 };
 
 export function characterWidth(family: string, size: number): number {
