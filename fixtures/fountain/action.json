@@ -1,0 +1,8 @@
+[
+  {"type": "action", "lines": [1, 1], "content": [{"text": "They drink long and well from the beers."}], "forced": false},
+  {"type": "action", "lines": [3, 5], "content": [{"text": "And then there's a long beat.\nLonger than is funny.\nLong enough to be depressing."}], "forced": false},
+  {"type": "action", "lines": [7, 7], "content": [{"text": "The men look at each other."}], "forced": false},
+  {"type": "action", "lines": [9, 9], "content": [{"text": "BANG!"}], "forced": false},
+  {"type": "action", "lines": [11, 12], "content": [{"text": "        Tabs at the start are kept.\n    So are four spaces."}], "forced": false},
+  {"type": "action", "lines": [14, 14], "content": [{"text": "He reads: \"GOING OUT OF BUSINESS.\""}], "forced": false}
+]

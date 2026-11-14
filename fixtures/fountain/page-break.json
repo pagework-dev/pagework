@@ -1,0 +1,7 @@
+[
+  {"type": "action", "lines": [1, 1], "content": [{"text": "The first page ends here."}], "forced": false},
+  {"type": "page_break", "lines": [3, 3]},
+  {"type": "action", "lines": [5, 5], "content": [{"text": "The second page starts here."}], "forced": false},
+  {"type": "page_break", "lines": [7, 7]},
+  {"type": "action", "lines": [9, 9], "content": [{"text": "The third page starts here."}], "forced": false}
+]

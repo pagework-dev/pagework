@@ -1,0 +1,10 @@
+[
+  {"type": "scene_heading", "lines": [1, 1], "content": [{"text": "INT. HOUSE - DAY"}], "sceneNumber": "1", "forced": false},
+  {"type": "scene_heading", "lines": [3, 3], "content": [{"text": "INT. HOUSE - DAY"}], "sceneNumber": "1A", "forced": false},
+  {"type": "scene_heading", "lines": [5, 5], "content": [{"text": "INT. HOUSE - DAY"}], "sceneNumber": "1a", "forced": false},
+  {"type": "scene_heading", "lines": [7, 7], "content": [{"text": "INT. HOUSE - DAY"}], "sceneNumber": "A1", "forced": false},
+  {"type": "scene_heading", "lines": [9, 9], "content": [{"text": "INT. HOUSE - DAY"}], "sceneNumber": "I-1-A", "forced": false},
+  {"type": "scene_heading", "lines": [11, 11], "content": [{"text": "INT. HOUSE - DAY"}], "sceneNumber": "1.", "forced": false},
+  {"type": "scene_heading", "lines": [13, 13], "content": [{"text": "FLASHBACK"}], "sceneNumber": "110A", "forced": true},
+  {"type": "scene_heading", "lines": [15, 15], "content": [{"text": "INT. HOUSE - DAY #1 2#"}], "sceneNumber": null, "forced": false}
+]

@@ -1,0 +1,6 @@
+[
+  {"type": "character", "lines": [1, 1], "name": "McCLANE", "extensions": [], "dual": null, "forced": true},
+  {"type": "dialogue", "lines": [2, 2], "content": [{"text": "Yippie ki-yay! I got my lower-case C back!"}]},
+  {"type": "character", "lines": [4, 4], "name": "McCLANE", "extensions": ["V.O."], "dual": null, "forced": true},
+  {"type": "dialogue", "lines": [5, 5], "content": [{"text": "Still here."}]}
+]

@@ -1,0 +1,5 @@
+[
+  {"type": "centered", "lines": [1, 1], "content": [{"text": "THE END"}]},
+  {"type": "centered", "lines": [3, 3], "content": [{"text": "THE END"}]},
+  {"type": "centered", "lines": [5, 6], "content": [{"text": "Fin", "italic": true}, {"text": "\nA Pagework fixture"}]}
+]

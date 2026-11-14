@@ -1,0 +1,5 @@
+[
+  {"type": "lyrics", "lines": [1, 2], "content": [{"text": "Sing a song of rain and rust,\nof engines cold and roads of dust."}]},
+  {"type": "character", "lines": [4, 4], "name": "MAGGIE", "extensions": [], "dual": null, "forced": false},
+  {"type": "lyrics", "lines": [5, 5], "content": [{"text": "Turn the key and let it roar."}]}
+]

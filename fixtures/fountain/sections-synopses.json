@@ -1,0 +1,8 @@
+[
+  {"type": "section", "lines": [1, 1], "depth": 1, "text": "ACT I"},
+  {"type": "synopsis", "lines": [3, 3], "text": "Set up the characters and the story."},
+  {"type": "scene_heading", "lines": [5, 5], "content": [{"text": "EXT. BRICK'S PATIO - DAY"}], "sceneNumber": null, "forced": false},
+  {"type": "synopsis", "lines": [7, 7], "text": "This scene sets up Brick & Steel's new life as retirees. Warm sun, cold beer, and absolutely nothing to do."},
+  {"type": "section", "lines": [9, 9], "depth": 2, "text": "Brick and Steel retire"},
+  {"type": "section", "lines": [11, 11], "depth": 3, "text": "Lunch"}
+]

@@ -1,0 +1,8 @@
+[
+  {"type": "character", "lines": [1, 1], "name": "SANBORN", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [2, 2], "content": [{"text": "A good 'ole boy. You know, loves the Army, blood runs green. Country boy. Seems solid."}]},
+  {"type": "character", "lines": [4, 4], "name": "DEALER", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [5, 9], "content": [{"text": "Ten.\nFour.\nDealer gets a seven.\n\nHit or stand sir?"}]},
+  {"type": "character", "lines": [11, 11], "name": "MONKEY", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [12, 12], "content": [{"text": "Dude, I'm a monkey."}]}
+]

@@ -1,0 +1,14 @@
+[
+  {"type": "character", "lines": [1, 1], "name": "BRICK", "extensions": [], "dual": "left", "forced": false},
+  {"type": "dialogue", "lines": [2, 2], "content": [{"text": "Screw retirement."}]},
+  {"type": "character", "lines": [4, 4], "name": "STEEL", "extensions": [], "dual": "right", "forced": false},
+  {"type": "dialogue", "lines": [5, 5], "content": [{"text": "Screw retirement."}]},
+  {"type": "character", "lines": [7, 7], "name": "BRICK", "extensions": [], "dual": "left", "forced": false},
+  {"type": "dialogue", "lines": [8, 8], "content": [{"text": "Fine."}]},
+  {"type": "character", "lines": [10, 10], "name": "STEEL", "extensions": [], "dual": "right", "forced": false},
+  {"type": "parenthetical", "lines": [11, 11], "content": [{"text": "(smiling)"}]},
+  {"type": "dialogue", "lines": [12, 12], "content": [{"text": "Fine."}]},
+  {"type": "action", "lines": [14, 14], "content": [{"text": "They walk off."}], "forced": false},
+  {"type": "character", "lines": [16, 16], "name": "MAX", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [17, 17], "content": [{"text": "Nobody spoke before me."}]}
+]

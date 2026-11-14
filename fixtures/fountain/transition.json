@@ -1,0 +1,9 @@
+[
+  {"type": "action", "lines": [1, 1], "content": [{"text": "Jack begins to argue vociferously in Vietnamese (?)"}], "forced": false},
+  {"type": "transition", "lines": [3, 3], "content": [{"text": "CUT TO:"}], "forced": false},
+  {"type": "scene_heading", "lines": [5, 5], "content": [{"text": "EXT. BRICK'S POOL - DAY"}], "sceneNumber": null, "forced": false},
+  {"type": "transition", "lines": [7, 7], "content": [{"text": "Burn to White."}], "forced": true},
+  {"type": "action", "lines": [9, 11], "content": [{"text": "Then:\nCUT TO:\nmore action."}], "forced": false},
+  {"type": "action", "lines": [13, 13], "content": [{"text": "FADE OUT."}], "forced": false},
+  {"type": "transition", "lines": [15, 15], "content": [{"text": "FADE OUT."}], "forced": true}
+]

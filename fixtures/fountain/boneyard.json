@@ -1,0 +1,7 @@
+[
+  {"type": "character", "lines": [1, 1], "name": "COGNITO", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [2, 2], "content": [{"text": "Everyone's coming after you mate!  Like that's my problem!"}]},
+  {"type": "boneyard", "lines": [4, 8], "text": "\nINT. GARAGE - DAY\n\nBRICK and STEEL get into Mom's PORSCHE, Steel at the wheel. They pause for a beat, the gravity of the situation catching up with them.\n"},
+  {"type": "scene_heading", "lines": [10, 10], "content": [{"text": "INT. GARAGE - DAY"}], "sceneNumber": "2", "forced": false},
+  {"type": "action", "lines": [12, 12], "content": [{"text": "They drive  fast."}], "forced": false}
+]
