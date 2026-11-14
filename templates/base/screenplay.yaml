@@ -1,0 +1,121 @@
+# Shared screenplay rules. No page size or margins: those differ between
+# US Letter and A4, so screenplay-us and screenplay-a4 set them.
+#
+# Sources
+#   [courier] Courier 12 pt at 6 lines per inch and 10 characters per inch is
+#             the convention every screenplay format guide starts from; the
+#             one-page-per-minute rule of thumb depends on it. Courier Prime is
+#             drawn to the same metrics (its advance width is 600 units per
+#             1000 em, i.e. 7.2 pt = 0.1 in at 12 pt; checked in packages/pdf).
+#   UNVERIFIED: a common industry value I could not check against a written
+#             reference while building this (no reference was reachable from
+#             the build machine). Each one is listed in the pull request that
+#             added it and must be checked against reference scripts before
+#             release, as docs/TEMPLATES.md requires.
+#
+# Indents are measured from the left margin. Figures "from the edge" in the
+# comments add the 1.5 in left margin that both page sizes use.
+
+schema: 1
+id: base/screenplay
+name: Screenplay (base)
+kind: screenplay
+
+font:
+  family: Courier Prime
+  size: 12pt # [courier]
+  line_height: 12pt # [courier] 6 lines per inch
+
+elements:
+  scene_heading:
+    indent: 0in # UNVERIFIED: flush with the left margin (1.5 in from the edge)
+    case: upper
+    space_before: 1 # UNVERIFIED: one blank line before; some formats use two
+
+  action:
+    indent: 0in # UNVERIFIED: flush with the left margin
+    space_before: 1 # UNVERIFIED: paragraphs separated by one blank line
+
+  character:
+    indent: 2.2in # UNVERIFIED: 3.7 in from the edge
+    case: upper
+    space_before: 1 # UNVERIFIED
+
+  parenthetical:
+    indent: 1.6in # UNVERIFIED: 3.1 in from the edge
+    width: 2in # UNVERIFIED: about 20 characters at 10 per inch
+
+  dialogue:
+    indent: 1in # UNVERIFIED: 2.5 in from the edge
+    width: 3.5in # UNVERIFIED: about 35 characters at 10 per inch
+
+  transition:
+    align: right # UNVERIFIED: ends at the right margin
+    case: upper
+    space_before: 1 # UNVERIFIED
+
+  centered:
+    align: center
+    space_before: 1 # UNVERIFIED
+
+  lyrics:
+    indent: 1in # UNVERIFIED: placed like dialogue
+    width: 3.5in # UNVERIFIED: placed like dialogue
+    style: [italic] # UNVERIFIED: common rendering of Fountain lyrics
+    space_before: 1 # UNVERIFIED: only applies outside a speech
+
+  dual_dialogue:
+    # The area runs from the left margin to the right margin; each column is
+    # half of it less half the gap.
+    indent: 0in # UNVERIFIED
+    gap: 0.25in # UNVERIFIED
+    space_before: 1 # UNVERIFIED
+    character:
+      indent: 0.8in # UNVERIFIED: cue roughly centred over its column
+    parenthetical:
+      indent: 0.3in # UNVERIFIED
+    dialogue:
+      indent: 0in # UNVERIFIED: speech fills the column
+    lyrics:
+      indent: 0in # UNVERIFIED
+
+pagination:
+  dialogue:
+    split: true
+    more: "(MORE)"
+    continued: "(CONT'D)"
+    min_lines_each_side: 2 # UNVERIFIED: no fewer than two lines of speech either side of a break
+  character_continued:
+    enabled: true
+    text: "(CONT'D)"
+  scene_continued:
+    enabled: false # docs/TEMPLATES.md: production scripts only, off by default (ADR 0011)
+    top: "CONTINUED:"
+    bottom: "(CONTINUED)"
+  scene_heading:
+    keep_with_next: 2 # UNVERIFIED: a heading needs two lines of what follows on its page
+  scene_numbers: none # spec scripts are unnumbered; production drafts turn this on
+
+scene_number:
+  left: 0.75in # UNVERIFIED: left-hand number starts 0.75 in from the edge
+
+header:
+  offset: 0.5in # UNVERIFIED: page number line half an inch from the top edge
+  page_number:
+    align: right # UNVERIFIED: ends at the right margin
+    format: "{page}." # UNVERIFIED: number followed by a full stop
+    from_page: 2 # UNVERIFIED: the first script page shows no number
+
+title_page:
+  title:
+    case: upper # UNVERIFIED
+  center:
+    top: 3.5in # UNVERIFIED: title block about a third of the way down
+    fields: [title, credit, author, authors, source]
+    space_between: 1 # UNVERIFIED: one blank line between title, credit and author
+  bottom_left:
+    fields: [contact, copyright] # UNVERIFIED: contact details bottom left
+    space_between: 1
+  bottom_right:
+    fields: [draft_date, date, revision, notes] # UNVERIFIED: draft details bottom right
+    space_between: 1

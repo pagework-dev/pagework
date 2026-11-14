@@ -1,0 +1,20 @@
+# Screenplay on A4, as used in the UK, Europe and Australia. Element indents
+# are inherited unchanged, so a script reads the same on either paper; A4 is
+# taller and slightly narrower, so pages hold a little more text. Sources and
+# the meaning of UNVERIFIED are in base/screenplay.yaml.
+
+schema: 1
+id: screenplay-a4
+name: Screenplay (A4)
+extends: base/screenplay
+
+page:
+  size: a4 # 210 × 297 mm (ISO 216)
+  margin:
+    top: 25mm # UNVERIFIED: common A4 value (about 1 in)
+    bottom: 25mm # UNVERIFIED: common A4 value (about 1 in)
+    left: 38mm # UNVERIFIED: common A4 value (about 1.5 in, as on Letter)
+    right: 25mm # UNVERIFIED: common A4 value (about 1 in)
+
+scene_number:
+  right: 197mm # UNVERIFIED: right-hand number ends 13 mm from the edge
