@@ -1,5 +1,6 @@
 import { characterWidth, type PageModel } from "@pagework/layout";
 import {
+  PDFArray,
   PDFDict,
   PDFDocument,
   PDFName,
@@ -50,29 +51,38 @@ const model: PageModel = {
   ],
 };
 
+function latin1(bytes: Uint8Array): string {
+  let text = "";
+  for (const byte of bytes) text += String.fromCharCode(byte);
+  return text;
+}
+
 async function contentOf(
   bytes: Uint8Array,
   pageIndex: number,
 ): Promise<string> {
   const doc = await PDFDocument.load(bytes);
-  const page = doc.getPage(pageIndex);
-  const contents = page.node.Contents();
-  const streams =
-    contents instanceof PDFRef ? [doc.context.lookup(contents)] : [contents];
-  return streams
+  const contents = doc.getPage(pageIndex).node.Contents();
+  // A page's content is one stream or an array of them.
+  const items =
+    contents instanceof PDFArray
+      ? contents.asArray()
+      : contents === undefined
+        ? []
+        : [contents];
+  return items
+    .map((item) => (item instanceof PDFRef ? doc.context.lookup(item) : item))
     .map((s) =>
-      s instanceof PDFRawStream
-        ? new TextDecoder("latin1").decode(decodePDFRawStream(s).decode())
-        : "",
+      s instanceof PDFRawStream ? latin1(decodePDFRawStream(s).decode()) : "",
     )
     .join("\n");
 }
 
 describe("Courier Prime font files", () => {
-  it.each(Object.entries(fonts))(
+  it.each(Object.keys(fonts) as (keyof typeof fonts)[])(
     "%s is monospaced with the advance layout uses",
-    (_, bytes) => {
-      const info = readFont(bytes);
+    (style) => {
+      const info = readFont(fonts[style]);
       expect(info.isFixedPitch).toBe(true);
       for (let c = 32; c < 127; c++) {
         expect((info.advanceOf(c) ?? 0) / info.unitsPerEm).toBeCloseTo(
