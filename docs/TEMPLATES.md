@@ -1,6 +1,6 @@
 # Script templates
 
-Status: draft specification. The schema will be published as `packages/templates/schema.json`; this document explains it.
+Status: draft specification. The schema is `packages/templates/schema.json`; this document explains it.
 
 A template decides how a script looks on the page: page size, margins, font, how each element is indented and styled, and how pages break. The writing itself is always Fountain; the template only changes rendering. The same script can be switched between templates at any time ([ADR 0007](adr/0007-templates-as-data.md)).
 
@@ -64,6 +64,7 @@ elements:
 | `font` | yes, after inheritance | Family, size and line height. |
 | `elements` | yes, after inheritance | One entry per element type. |
 | `pagination` | yes, after inheritance | Page-break rules. |
+| `scene_number` | when `pagination.scene_numbers` isn't `none` | Where scene numbers sit. |
 | `header`, `footer` | no | Page numbers and running text. |
 | `title_page` | no | Layout of the title page fields. |
 
@@ -103,7 +104,21 @@ Each element type takes:
 | `wrap` | `parentheses` or `brackets`, if not typed by the writer |
 | `space_before` | Blank lines before the element |
 
-Screenplay element types: `scene_heading`, `action`, `character`, `parenthetical`, `dialogue`, `transition`, `centered`, `lyrics`, `dual_dialogue`.
+Leave out `width` to run the text to the right margin.
+
+Screenplay element types: `scene_heading`, `action`, `character`, `parenthetical`, `dialogue`, `transition`, `centered`, `lyrics`, `dual_dialogue`. All except `dual_dialogue` are required after inheritance.
+
+`dual_dialogue` describes two speeches side by side. It takes `indent`, `width` (the whole area; leave it out to run to the right margin), `gap` (between the two columns) and `space_before`. It also takes `character`, `parenthetical`, `dialogue` and `lyrics`, each with an `indent` and optional `width` measured inside one column:
+
+```yaml
+dual_dialogue:
+  gap: 0.25in
+  character: { indent: 0.8in }
+  parenthetical: { indent: 0.3in }
+  dialogue: { indent: 0in }
+```
+
+Case, style and prefix/suffix inside the columns come from the ordinary element entries.
 
 Stage element types: `act_heading`, `scene_heading`, `stage_direction`, `character`, `parenthetical`, `dialogue`, `lyrics`.
 
@@ -130,7 +145,47 @@ pagination:
   scene_numbers: both       # none | left | right | both
 ```
 
+All `pagination` fields are required after inheritance; there are no built-in defaults, because a hidden default is a formatting rule no one chose.
+
 Continuation markers are only ever produced here, at render time. They are never stored in a script, and imports remove them ([ADR 0011](adr/0011-continuation-markers-render-only.md)).
+
+### `scene_number`
+
+```yaml
+scene_number:
+  left: 0.75in    # where the left-hand number starts, from the left edge of the page
+  right: 8in      # where the right-hand number ends, from the left edge of the page
+```
+
+### `header` and `footer`
+
+```yaml
+header:
+  offset: 0.5in         # from the top edge (a footer measures from the bottom edge)
+  page_number:
+    align: right        # left | center | right, within the margins
+    format: "{page}."
+    from_page: 2        # first script page that shows its number
+```
+
+Script pages are numbered from 1. The title page is not counted.
+
+### `title_page`
+
+Title page keys are matched in lower case with spaces as underscores (`Draft date` is `draft_date`). Keys that aren't listed in any area are not printed.
+
+```yaml
+title_page:
+  title: { case: upper, style: [] }
+  center:
+    top: 3.5in          # top of the centred block, from the top edge
+    fields: [title, credit, author, authors, source]
+    space_between: 1    # blank lines between fields
+  bottom_left:
+    fields: [contact, copyright]   # the block ends at the bottom margin
+  bottom_right:
+    fields: [draft_date]
+```
 
 ### Inheritance
 
