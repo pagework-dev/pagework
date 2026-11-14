@@ -5,15 +5,21 @@ import { parse } from "../src/index.ts";
 // Golden files: each fixture is a .fountain input with its expected element
 // list beside it as JSON. Load with Vite's glob so the package itself stays
 // free of Node APIs.
-const inputs = import.meta.glob<string>("../../../fixtures/fountain/*.fountain", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-});
-const expected = import.meta.glob<unknown>("../../../fixtures/fountain/*.json", {
-  import: "default",
-  eager: true,
-});
+const inputs = import.meta.glob<string>(
+  "../../../fixtures/fountain/*.fountain",
+  {
+    query: "?raw",
+    import: "default",
+    eager: true,
+  },
+);
+const expected = import.meta.glob<unknown>(
+  "../../../fixtures/fountain/*.json",
+  {
+    import: "default",
+    eager: true,
+  },
+);
 
 const cases = Object.entries(inputs).map(([path, source]) => {
   const jsonPath = path.replace(/\.fountain$/, ".json");
