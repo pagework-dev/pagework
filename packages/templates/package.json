@@ -10,5 +10,9 @@
   },
   "scripts": {
     "typecheck": "tsc --project ."
+  },
+  "dependencies": {
+    "@cfworker/json-schema": "4.1.6",
+    "yaml": "2.9.1"
   }
 }
