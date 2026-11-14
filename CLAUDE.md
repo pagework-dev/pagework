@@ -33,3 +33,11 @@ Instructions for AI coding agents working in this repository. Humans may find it
 ## Interface work
 
 Follow `docs/DESIGN.md`: tokens only (no raw hex in components), system UI font, Courier Prime only on the script page, every empty/loading/error/offline state designed, copy that names the action. Run the self-audit checks listed in DESIGN.md before calling UI work done.
+
+## Sessions
+
+- Work on a branch and open a pull request; never push to main.
+- One roadmap stage per pull request, small enough to review in one sitting.
+- End every commit message with these two trailer lines, each on its own line:
+  Signed-off-by: timezonex <contact@thorngate.xyz>
+  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
