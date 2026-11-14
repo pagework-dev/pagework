@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pagework.dev/schema/template-1.json",
+  "title": "Pagework script template, schema 1",
+  "description": "One template file before inheritance, with `null` values (which remove an inherited value) taken out first. See docs/TEMPLATES.md. Whether the merged result is complete is checked after `extends` is resolved.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "id", "name"],
+  "properties": {
+    "schema": { "const": 1 },
+    "id": {
+      "type": "string",
+      "pattern": "^(base/)?[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "name": { "type": "string", "minLength": 1 },
+    "extends": {
+      "type": "string",
+      "pattern": "^(base/)?[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "kind": { "enum": ["screenplay", "stage"] },
+    "page": { "$ref": "#/$defs/page" },
+    "font": { "$ref": "#/$defs/font" },
+    "elements": { "$ref": "#/$defs/elements" },
+    "pagination": { "$ref": "#/$defs/pagination" },
+    "scene_number": { "$ref": "#/$defs/sceneNumber" },
+    "header": { "$ref": "#/$defs/running" },
+    "footer": { "$ref": "#/$defs/running" },
+    "title_page": { "$ref": "#/$defs/titlePage" }
+  },
+  "$defs": {
+    "length": {
+      "description": "A length with its unit. Bare numbers are rejected so A4 and Letter values can't be mixed up by accident.",
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(mm|in|pt)$"
+    },
+    "lines": {
+      "description": "A count of lines.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "text": { "type": "string" },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "size": {
+          "oneOf": [
+            { "enum": ["a4", "letter"] },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["width", "height"],
+              "properties": {
+                "width": { "$ref": "#/$defs/length" },
+                "height": { "$ref": "#/$defs/length" }
+              }
+            }
+          ]
+        },
+        "margin": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "top": { "$ref": "#/$defs/length" },
+            "bottom": { "$ref": "#/$defs/length" },
+            "left": { "$ref": "#/$defs/length" },
+            "right": { "$ref": "#/$defs/length" }
+          }
+        }
+      }
+    },
+    "font": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "family": { "enum": ["Courier Prime"] },
+        "size": { "$ref": "#/$defs/length" },
+        "line_height": { "$ref": "#/$defs/length" }
+      }
+    },
+    "style": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "enum": ["bold", "italic", "underline"] }
+    },
+    "element": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "indent": { "$ref": "#/$defs/length" },
+        "width": { "$ref": "#/$defs/length" },
+        "align": { "enum": ["left", "right", "center"] },
+        "case": { "enum": ["as-written", "upper"] },
+        "style": { "$ref": "#/$defs/style" },
+        "prefix": { "$ref": "#/$defs/text" },
+        "suffix": { "$ref": "#/$defs/text" },
+        "wrap": { "enum": ["parentheses", "brackets"] },
+        "space_before": { "$ref": "#/$defs/lines" }
+      }
+    },
+    "dualDialogue": {
+      "description": "Two speeches side by side. `indent` and `width` give the whole area; it is split into two columns `gap` apart, and the cue, parenthetical and dialogue are placed inside each column.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "indent": { "$ref": "#/$defs/length" },
+        "width": { "$ref": "#/$defs/length" },
+        "gap": { "$ref": "#/$defs/length" },
+        "space_before": { "$ref": "#/$defs/lines" },
+        "character": { "$ref": "#/$defs/columnElement" },
+        "parenthetical": { "$ref": "#/$defs/columnElement" },
+        "dialogue": { "$ref": "#/$defs/columnElement" },
+        "lyrics": { "$ref": "#/$defs/columnElement" }
+      }
+    },
+    "columnElement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "indent": { "$ref": "#/$defs/length" },
+        "width": { "$ref": "#/$defs/length" }
+      }
+    },
+    "elements": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scene_heading": { "$ref": "#/$defs/element" },
+        "action": { "$ref": "#/$defs/element" },
+        "character": { "$ref": "#/$defs/element" },
+        "parenthetical": { "$ref": "#/$defs/element" },
+        "dialogue": { "$ref": "#/$defs/element" },
+        "transition": { "$ref": "#/$defs/element" },
+        "centered": { "$ref": "#/$defs/element" },
+        "lyrics": { "$ref": "#/$defs/element" },
+        "dual_dialogue": { "$ref": "#/$defs/dualDialogue" },
+        "act_heading": { "$ref": "#/$defs/element" },
+        "stage_direction": { "$ref": "#/$defs/element" }
+      }
+    },
+    "pagination": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dialogue": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "split": { "type": "boolean" },
+            "more": { "type": "string" },
+            "continued": { "type": "string" },
+            "min_lines_each_side": { "$ref": "#/$defs/lines" }
+          }
+        },
+        "character_continued": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "text": { "type": "string" }
+          }
+        },
+        "scene_continued": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "top": { "type": "string" },
+            "bottom": { "type": "string" }
+          }
+        },
+        "scene_heading": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "keep_with_next": { "$ref": "#/$defs/lines" }
+          }
+        },
+        "scene_numbers": { "enum": ["none", "left", "right", "both"] }
+      }
+    },
+    "sceneNumber": {
+      "description": "Where scene numbers sit, measured from the left edge of the page: `left` is where the left number starts, `right` where the right number ends.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "left": { "$ref": "#/$defs/length" },
+        "right": { "$ref": "#/$defs/length" }
+      }
+    },
+    "running": {
+      "description": "A header or footer. `offset` is the distance from the page edge (top for a header, bottom for a footer) to the line.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "offset": { "$ref": "#/$defs/length" },
+        "page_number": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "align": { "enum": ["left", "right", "center"] },
+            "format": {
+              "description": "`{page}` is replaced by the page number.",
+              "type": "string",
+              "pattern": "\\{page\\}"
+            },
+            "from_page": {
+              "description": "First page that shows its number. Script pages are numbered from 1; the title page is not counted.",
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "titleArea": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "top": { "$ref": "#/$defs/length" },
+        "fields": {
+          "description": "Title page keys in print order, lower case with spaces as underscores (\"Draft date\" is draft_date). Keys not listed in any area are not printed.",
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z0-9_]+$" }
+        },
+        "space_between": { "$ref": "#/$defs/lines" }
+      }
+    },
+    "titlePage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "center": { "$ref": "#/$defs/titleArea" },
+        "bottom_left": { "$ref": "#/$defs/titleArea" },
+        "bottom_right": { "$ref": "#/$defs/titleArea" },
+        "title": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "case": { "enum": ["as-written", "upper"] },
+            "style": { "$ref": "#/$defs/style" }
+          }
+        }
+      }
+    }
+  }
+}
