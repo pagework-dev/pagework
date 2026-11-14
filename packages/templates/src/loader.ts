@@ -384,3 +384,25 @@ export function resolveTemplate(
   }
   return template;
 }
+
+/**
+ * A loader over template sources keyed by id (`base/screenplay` is the file
+ * `base/screenplay.yaml`). Callers read the files however their platform
+ * allows: from disk in the CLI, from a bundle in the browser.
+ */
+export function templateStore(
+  sources: Readonly<Record<string, string>>,
+): (id: string) => TemplateFile {
+  return (id) => {
+    const source = sources[id];
+    if (source === undefined) {
+      throw new TemplateError(`No template with id "${id}"`);
+    }
+    return parseTemplate(source, `${id}.yaml`);
+  };
+}
+
+/** Turns a path below templates/ ("base/screenplay.yaml") into a template id. */
+export function templateIdFromPath(path: string): string {
+  return path.replace(/\\/g, "/").replace(/\.ya?ml$/, "");
+}
