@@ -170,14 +170,15 @@ function speech(
     style: styleOf(g, name),
   });
   // The cue's case applies to the name only: extensions keep the writer's
-  // case, as in the Fountain guide's "HANS (on the radio)".
+  // case, as in the Fountain guide's "HANS (on the radio)". A cue forced
+  // with @ keeps its own case too; that is what @ is for ("McCLANE").
   const nameStyle: ElementStyle = { ...cueStyle, case: "as-written" };
   const cue = (cueMarker: string | null): RowGroup => {
     const spans = cueSpans(
       {
         ...character,
         name:
-          cueStyle.case === "upper"
+          cueStyle.case === "upper" && !character.forced
             ? character.name.toUpperCase()
             : character.name,
       },
@@ -240,7 +241,7 @@ function columnRows(
       {
         ...character,
         name:
-          styleOf(g, "character").case === "upper"
+          styleOf(g, "character").case === "upper" && !character.forced
             ? character.name.toUpperCase()
             : character.name,
       },
