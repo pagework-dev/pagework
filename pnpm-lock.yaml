@@ -196,6 +196,15 @@ importers:
       '@pagework/fountain':
         specifier: workspace:*
         version: link:../../packages/fountain
+      '@pagework/layout':
+        specifier: workspace:*
+        version: link:../../packages/layout
+      '@pagework/pdf':
+        specifier: workspace:*
+        version: link:../../packages/pdf
+      '@pagework/templates':
+        specifier: workspace:*
+        version: link:../../packages/templates
     devDependencies:
       '@types/node':
         specifier: 26.6.6
