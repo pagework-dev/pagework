@@ -4,15 +4,24 @@
   {"type": "action", "lines": [5, 5], "content": [{"text": "bold italics", "bold": true, "italic": true}], "forced": false},
   {"type": "action", "lines": [7, 7], "content": [{"text": "underline", "underline": true}], "forced": false},
   {"type": "action", "lines": [9, 9], "content": [{"text": "Steel enters the code on the keypad: "}, {"text": "*9765*", "bold": true}], "forced": false},
-  {"type": "action", "lines": [11, 11], "content": [{"text": "He dialed *69 and then 23*, and then hung up."}], "forced": false},
-  {"type": "action", "lines": [13, 14], "content": [{"text": "As he rattles off the long list, Brick and Steel *share a look.\nThis is going to be BAD.*"}], "forced": false},
-  {"type": "action", "lines": [16, 16], "content": [{"text": "A lone * asterisk and a lone _ underscore."}], "forced": false},
-  {"type": "action", "lines": [18, 18], "content": [
+  {"type": "action", "lines": [11, 11], "content": [{"text": "He dialed *69 and then *23, and then hung up."}], "forced": false},
+  {"type": "action", "lines": [13, 13], "content": [{"text": "He dialed "}, {"text": "69 and then 23", "italic": true}, {"text": ", and then hung up."}], "forced": false},
+  {"type": "action", "lines": [15, 15], "content": [{"text": "He dialed *69 and then 23*, and then hung up."}], "forced": false},
+  {"type": "action", "lines": [17, 17], "content": [{"text": "As he rattles off the long list, Brick and Steel *share a look."}], "forced": false},
+  {"type": "action", "lines": [19, 19], "content": [{"text": "This is going to be BAD.*"}], "forced": false},
+  {"type": "action", "lines": [21, 21], "content": [
+    {"text": "an ", "underline": true},
+    {"text": "italicized", "underline": true, "italic": true},
+    {"text": " word within an underlined phrase", "underline": true}
+  ], "forced": false},
+  {"type": "action", "lines": [23, 23], "content": [{"text": "A lone * asterisk and a lone _ underscore."}], "forced": false},
+  {"type": "action", "lines": [25, 25], "content": [
     {"text": "Bold underline", "bold": true, "underline": true},
     {"text": " and "},
     {"text": "italic with ", "italic": true},
     {"text": "bold", "italic": true, "bold": true},
     {"text": " inside", "italic": true},
     {"text": "."}
-  ], "forced": false}
+  ], "forced": false},
+  {"type": "action", "lines": [27, 27], "content": [{"text": "A file_name_here stays plain."}], "forced": false}
 ]

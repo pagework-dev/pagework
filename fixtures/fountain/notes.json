@@ -5,7 +5,7 @@
   {"type": "character", "lines": [7, 7], "name": "JACK", "extensions": [], "dual": null, "forced": false},
   {"type": "parenthetical", "lines": [8, 8], "content": [{"text": "(in Vietnamese, subtitled)"}]},
   {"type": "dialogue", "lines": [9, 9], "content": [{"text": "Did you know Brick and Steel are retired?", "italic": true}]},
-  {"type": "action", "lines": [11, 14], "content": [{"text": "His hand is an inch from the receiver when the phone RINGS. Shaw pauses for a beat before picking it up.  He answers."}], "forced": false, "notes": ["This section needs work.\nEither that, or I need coffee.\n  \nDefinitely coffee."]},
+  {"type": "action", "lines": [11, 14], "content": [{"text": "His hand is an inch from the receiver when the phone RINGS. Scott pauses for a moment, suspicious for some reason. He looks around. Phone ringing."}], "forced": false, "notes": ["This section needs work.\nEither that, or I need coffee.\n  \nDefinitely coffee."]},
   {"type": "note", "lines": [16, 17], "text": "A note\non two lines."},
   {"type": "action", "lines": [19, 19], "content": [{"text": "Unclosed [[ brackets stay as text."}], "forced": false}
 ]

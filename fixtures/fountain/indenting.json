@@ -7,5 +7,5 @@
   {"type": "character", "lines": [10, 10], "name": "STEEL", "extensions": [], "dual": null, "forced": false},
   {"type": "parenthetical", "lines": [11, 11], "content": [{"text": "(starting the engine)"}]},
   {"type": "dialogue", "lines": [12, 12], "content": [{"text": "So much for retirement!"}]},
-  {"type": "action", "lines": [14, 14], "content": [{"text": "                They speed off. To destiny!"}], "forced": false}
+  {"type": "action", "lines": [14, 14], "content": [{"text": "They speed off. To destiny!"}], "forced": false}
 ]
