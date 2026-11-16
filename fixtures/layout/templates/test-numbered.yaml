@@ -1,0 +1,8 @@
+schema: 1
+id: test-numbered
+name: Short pages with scene numbers (layout tests)
+extends: test-short
+pagination:
+  scene_numbers: both
+scene_number:
+  left: 0.7in # a whole column (7) in the text picture

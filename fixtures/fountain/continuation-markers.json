@@ -1,0 +1,17 @@
+[
+  {"type": "scene_heading", "lines": [1, 1], "content": [{"text": "INT. HALL - DAY"}], "sceneNumber": null, "forced": false},
+  {"type": "character", "lines": [3, 3], "name": "TOM", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [4, 4], "content": [{"text": "I was saying something"}]},
+  {"type": "character", "lines": [7, 7], "name": "TOM", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [8, 8], "content": [{"text": "and then I carried on."}]},
+  {"type": "character", "lines": [12, 12], "name": "TOM", "extensions": ["V.O."], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [13, 13], "content": [{"text": "Still talking."}]},
+  {"type": "character", "lines": [17, 17], "name": "ANNA", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [18, 18], "content": [{"text": "Me too."}]},
+  {"type": "character", "lines": [20, 20], "name": "BEN", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [21, 21], "content": [{"text": "And me."}]},
+  {"type": "character", "lines": [23, 23], "name": "CAL", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [24, 24], "content": [{"text": "Last."}]},
+  {"type": "character", "lines": [26, 26], "name": "DOT", "extensions": ["O.S."], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [27, 27], "content": [{"text": "CONTINUED: (2)"}]}
+]

@@ -9,6 +9,11 @@ import type {
 } from "./elements.ts";
 import { joinLines } from "./emphasis.ts";
 import { isKeptEmptyLine, logicalLines, type LogicalLine } from "./lines.ts";
+import {
+  isContinuedExtension,
+  isMoreLine,
+  isSceneContinuedLine,
+} from "./markers.ts";
 
 /**
  * Title page keys from the Fountain 1.1 guide. Only these can start a title
@@ -37,6 +42,8 @@ const CUE = /^([^(]*?)\s*((?:\([^)]*\)\s*)*)$/;
 type LineKind =
   | { kind: "blank" }
   | { kind: "hidden" }
+  /** A typed continuation marker (ADR 0011): skipped like a hidden line. */
+  | { kind: "marker" }
   | { kind: "action"; text: string; forced: boolean }
   | { kind: "dialogue"; text: string }
   | { kind: "lyrics"; text: string }
@@ -97,6 +104,7 @@ function classify(lines: LogicalLine[], start: number): LineKind[] {
       if (isBoneyardLine(line)) return true;
       if (isHidden(line)) continue;
       const kind = step === -1 ? kinds[j - start] : undefined;
+      if (kind?.kind === "marker") continue;
       if (kind !== undefined) return kind.kind === "blank";
       return isBlank(line);
     }
@@ -127,7 +135,8 @@ function classify(lines: LogicalLine[], start: number): LineKind[] {
     }
 
     if (inDialogue) {
-      if (t.startsWith("~"))
+      if (isMoreLine(t)) push({ kind: "marker" });
+      else if (t.startsWith("~"))
         push({ kind: "lyrics", text: t.slice(1).trimStart() });
       else if (t.startsWith("(") && t.endsWith(")"))
         push({ kind: "parenthetical", text: t });
@@ -136,6 +145,10 @@ function classify(lines: LogicalLine[], start: number): LineKind[] {
     }
 
     const nextBlank = neighbourIsBlank(i, 1);
+    if (prevBlank && nextBlank && isSceneContinuedLine(t)) {
+      push({ kind: "marker" });
+      continue;
+    }
 
     if (/^={3,}$/.test(t)) {
       push({ kind: "page_break" });
@@ -218,9 +231,11 @@ function character(text: string, forced: boolean, range: LineRange): Character {
   const cue = text.replace(/\s*\^$/, "");
   const match = CUE.exec(cue);
   const name = (match?.[1] ?? cue).trim();
-  const extensions = [...(match?.[2] ?? "").matchAll(/\(([^)]*)\)/g)].map(
-    (m) => m[1] ?? "",
-  );
+  // Typed continuation markers are dropped (ADR 0011); the paginator adds
+  // its own, so keeping them would print them twice.
+  const extensions = [...(match?.[2] ?? "").matchAll(/\(([^)]*)\)/g)]
+    .map((m) => m[1] ?? "")
+    .filter((extension) => !isContinuedExtension(extension));
   return {
     type: "character",
     lines: range,
@@ -322,6 +337,12 @@ export function parse(source: string): Element[] {
 
     if (kind.kind === "blank") {
       gap.push(line);
+      continue;
+    }
+    // A removed marker line (ADR 0011) closes up like a note, so taking out
+    // "CONTINUED:" never leaves extra empty lines behind.
+    if (kind.kind === "marker") {
+      gapHasHidden = true;
       continue;
     }
     if (kind.kind === "hidden") {

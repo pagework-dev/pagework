@@ -1,0 +1,11 @@
+=== page 1 ===
+06|               Line A.
+08|               Line B.
+10|               Line C.
+12|               Line D.
+=== page 2 ===
+03|                                                                         2.
+06|                                     ANNA
+07|                         First line.
+08|                         Second line.
+09|                         Third line.
