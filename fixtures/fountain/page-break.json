@@ -3,5 +3,11 @@
   {"type": "page_break", "lines": [3, 3]},
   {"type": "action", "lines": [5, 5], "content": [{"text": "The second page starts here."}], "forced": false},
   {"type": "page_break", "lines": [7, 7]},
-  {"type": "action", "lines": [9, 9], "content": [{"text": "The third page starts here."}], "forced": false}
+  {"type": "action", "lines": [9, 9], "content": [{"text": "The third page starts here."}], "forced": false},
+  {"type": "action", "lines": [11, 11], "content": [{"text": "The General Lee flies through the air. FREEZE FRAME."}], "forced": false},
+  {"type": "character", "lines": [13, 13], "name": "NARRATOR", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [14, 14], "content": [{"text": "Shoot, to the Dukes that's about like taking Grandma for a Sunday drive."}]},
+  {"type": "centered", "lines": [16, 16], "content": [{"text": "End of Act One", "bold": true}]},
+  {"type": "page_break", "lines": [18, 18]},
+  {"type": "centered", "lines": [20, 20], "content": [{"text": "Act Two", "bold": true}]}
 ]

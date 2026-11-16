@@ -67,6 +67,16 @@ function isHidden(line: LogicalLine): boolean {
   return line.regions.length > 0 && line.text.trim() === "";
 }
 
+/**
+ * Boneyard text is ignored completely, which leaves an empty line where it
+ * was: the guide's own example puts a boneyard between "CUT TO:" and a scene
+ * heading with no blank lines around it. A note on its own line, by
+ * contrast, is invisible, so it never splits a cue from its speech.
+ */
+function isBoneyardLine(line: LogicalLine): boolean {
+  return isHidden(line) && line.regions.some((r) => r.kind === "boneyard");
+}
+
 function isBlank(line: LogicalLine): boolean {
   return line.text.trim() === "" && line.regions.length === 0;
 }
@@ -80,12 +90,12 @@ function classify(lines: LogicalLine[], start: number): LineKind[] {
   const kinds: LineKind[] = [];
   let inDialogue = false;
 
-  // Hidden lines (notes and boneyard on their own) are invisible to the
-  // blank-line rules: a note between a cue and its speech keeps them together.
   const neighbourIsBlank = (from: number, step: 1 | -1): boolean => {
     for (let j = from + step; j >= start && j < lines.length; j += step) {
       const line = lines[j];
-      if (line === undefined || isHidden(line)) continue;
+      if (line === undefined) continue;
+      if (isBoneyardLine(line)) return true;
+      if (isHidden(line)) continue;
       const kind = step === -1 ? kinds[j - start] : undefined;
       if (kind !== undefined) return kind.kind === "blank";
       return isBlank(line);
@@ -100,6 +110,7 @@ function classify(lines: LogicalLine[], start: number): LineKind[] {
       kinds.push(kind);
     };
     if (isHidden(line)) {
+      if (isBoneyardLine(line)) inDialogue = false;
       push({ kind: "hidden" });
       continue;
     }
@@ -152,7 +163,13 @@ function classify(lines: LogicalLine[], start: number): LineKind[] {
       push({ kind: "scene_heading", text: t.slice(1), forced: true });
     } else if (prevBlank && nextBlank && SCENE_HEADING.test(t)) {
       push({ kind: "scene_heading", text: t, forced: false });
-    } else if (prevBlank && nextBlank && isUpperCase(t) && t.endsWith("TO:")) {
+    } else if (
+      prevBlank &&
+      nextBlank &&
+      isUpperCase(t) &&
+      // Untrimmed: the guide makes "CUT TO: " (space after the colon) action.
+      line.text.endsWith("TO:")
+    ) {
       push({ kind: "transition", text: t, forced: false });
     } else if (prevBlank && !nextBlank && isCharacterCue(t)) {
       push({ kind: "character", text: t, forced: false });
@@ -291,12 +308,38 @@ export function parse(source: string): Element[] {
   const start = title?.next ?? 0;
   const kinds = classify(lines, start);
 
+  // Blank lines since the last printed element. One separates paragraphs;
+  // the guide passes any more through as empty action lines. A gap with a
+  // note or boneyard in it closes up instead, as the guide says of notes.
+  let gap: LogicalLine[] = [];
+  let gapHasHidden = false;
+  let seenContent = false;
+
   for (let k = 0; k < kinds.length; k++) {
     const kind = kinds[k];
     const line = lines[start + k];
     if (kind === undefined || line === undefined) break;
 
-    if (kind.kind === "blank") continue;
+    if (kind.kind === "blank") {
+      gap.push(line);
+      continue;
+    }
+    if (kind.kind === "hidden") {
+      gapHasHidden = true;
+    } else {
+      const extra = gap.slice(1);
+      if (seenContent && !gapHasHidden && extra.length > 0) {
+        elements.push({
+          type: "action",
+          lines: rangeOf(extra),
+          content: joinLines(extra.map(() => "")),
+          forced: false,
+        });
+      }
+      gap = [];
+      gapHasHidden = false;
+      seenContent = true;
+    }
     if (kind.kind === "hidden") {
       for (const region of line.regions) {
         elements.push({
