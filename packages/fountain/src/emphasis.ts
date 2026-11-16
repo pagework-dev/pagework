@@ -8,6 +8,30 @@ interface Token {
   marker: boolean;
 }
 
+function isSpace(token: Token | undefined): boolean {
+  return token === undefined || /\s/.test(token.ch);
+}
+
+function isWordCharacter(token: Token | undefined): boolean {
+  return token !== undefined && /[\p{L}\p{N}]/u.test(token.ch);
+}
+
+/**
+ * Markdown's flanking rules, which Fountain 1.1 follows: a marker opens only
+ * if text follows it, and closes only if text precedes it, so "*69 and then
+ * *23" stays plain. Underscores also can't open or close inside a word, so
+ * file_name_here stays plain.
+ */
+function canOpen(tokens: Token[], at: number, length: number): boolean {
+  if (isSpace(tokens[at + length])) return false;
+  return tokens[at]?.ch !== "_" || !isWordCharacter(tokens[at - 1]);
+}
+
+function canClose(tokens: Token[], at: number, length: number): boolean {
+  if (isSpace(tokens[at - 1])) return false;
+  return tokens[at]?.ch !== "_" || !isWordCharacter(tokens[at + length]);
+}
+
 function tokenise(line: string): Token[] {
   const tokens: Token[] = [];
   for (let i = 0; i < line.length; i++) {
@@ -46,7 +70,7 @@ function findStarCloser(
     const run = starRun(tokens, j, end);
     if (run === 0) {
       j++;
-    } else if (run === length) {
+    } else if (run === length && canClose(tokens, j, run)) {
       return j;
     } else {
       j += run;
@@ -62,7 +86,7 @@ function findUnderscoreCloser(
 ): number {
   for (let j = from; j < end; j++) {
     const t = tokens[j];
-    if (t?.marker === true && t.ch === "_") return j;
+    if (t?.marker === true && t.ch === "_" && canClose(tokens, j, 1)) return j;
   }
   return -1;
 }
@@ -89,7 +113,7 @@ function parseRange(
     if (t === undefined) break;
     if (t.marker && t.ch === "*") {
       const run = starRun(tokens, i, end);
-      if (run <= 3) {
+      if (run <= 3 && canOpen(tokens, i, run)) {
         const closer = findStarCloser(tokens, i + run, end, run);
         if (closer > i + run) {
           flush();
@@ -107,7 +131,9 @@ function parseRange(
       text += "*".repeat(run);
       i += run;
     } else if (t.marker && t.ch === "_") {
-      const closer = findUnderscoreCloser(tokens, i + 1, end);
+      const closer = canOpen(tokens, i, 1)
+        ? findUnderscoreCloser(tokens, i + 1, end)
+        : -1;
       if (closer > i + 1) {
         flush();
         parseRange(
