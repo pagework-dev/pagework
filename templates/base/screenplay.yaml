@@ -113,9 +113,11 @@ title_page:
     top: 3.5in # UNVERIFIED: title block about a third of the way down
     fields: [title, credit, author, authors, source]
     space_between: 1 # UNVERIFIED: one blank line between title, credit and author
+  # Fountain 1.1 (fountain.io/syntax, Title Page) recommends Title, Credit,
+  # Author(s) and Source centred, and Contact and Draft date at the lower left.
   bottom_left:
-    fields: [contact, copyright] # UNVERIFIED: contact details bottom left
+    fields: [contact, draft_date, date, copyright]
     space_between: 1
   bottom_right:
-    fields: [draft_date, date, revision, notes] # UNVERIFIED: draft details bottom right
+    fields: [revision] # not in the Fountain guide's recommendation
     space_between: 1
