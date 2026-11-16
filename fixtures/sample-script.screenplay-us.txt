@@ -2,9 +2,10 @@
 21|                                         LOW TIDE
 23|                                        Written by
 25|                                   Pagework contributors
-57|               The Pagework project
-58|               Original sample script for
-59|               tests                                       14 November 2026
+55|               The Pagework project
+56|               Original sample script for
+57|               tests
+59|               14 November 2026
 === page 1 ===
 06|               INT. LIGHTHOUSE - LAMP ROOM - NIGHT
 08|               The great lamp turns. Every few seconds its beam sweeps
