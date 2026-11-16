@@ -4,5 +4,7 @@
   {"type": "character", "lines": [4, 4], "name": "DEALER", "extensions": [], "dual": null, "forced": false},
   {"type": "dialogue", "lines": [5, 9], "content": [{"text": "Ten.\nFour.\nDealer gets a seven.\n\nHit or stand sir?"}]},
   {"type": "character", "lines": [11, 11], "name": "MONKEY", "extensions": [], "dual": null, "forced": false},
-  {"type": "dialogue", "lines": [12, 12], "content": [{"text": "Dude, I'm a monkey."}]}
+  {"type": "dialogue", "lines": [12, 12], "content": [{"text": "Dude, I'm a monkey."}]},
+  {"type": "character", "lines": [14, 14], "name": "DAN", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [15, 16], "content": [{"text": "Then let's retire them.\n"}, {"text": "Permanently", "underline": true}, {"text": "."}]}
 ]

@@ -4,5 +4,8 @@
   {"type": "action", "lines": [7, 7], "content": [{"text": "The men look at each other."}], "forced": false},
   {"type": "action", "lines": [9, 9], "content": [{"text": "BANG!"}], "forced": false},
   {"type": "action", "lines": [11, 12], "content": [{"text": "        Tabs at the start are kept.\n    So are four spaces."}], "forced": false},
-  {"type": "action", "lines": [14, 14], "content": [{"text": "He reads: \"GOING OUT OF BUSINESS.\""}], "forced": false}
+  {"type": "action", "lines": [14, 14], "content": [{"text": "He opens the card. A simple little number inside of which is hand written:"}], "forced": false},
+  {"type": "action", "lines": [16, 19], "content": [{"text": "          Scott --\n          Jacob Billups\n          Palace Hotel, RM 412\n          1:00 pm tomorrow"}], "forced": false},
+  {"type": "action", "lines": [21, 22], "content": [{"text": "\n"}], "forced": false},
+  {"type": "action", "lines": [23, 23], "content": [{"text": "Scott exasperatedly throws down the card on the table and picks up the phone."}], "forced": false}
 ]

@@ -50,6 +50,32 @@ describe("parse", () => {
     ]);
   });
 
+  it("keeps extra empty lines only between printed elements", () => {
+    const types = (source: string): string[] =>
+      parse(source).map((e) => e.type);
+    expect(types("\n\n\nStart.\n\n\n\n")).toEqual(["action"]);
+    expect(parse("A.\n\n\nB.")[1]).toEqual({
+      type: "action",
+      lines: [3, 3],
+      content: [],
+      forced: false,
+    });
+  });
+
+  it("closes up the empty lines around a note on its own line", () => {
+    expect(parse("A.\n\n\n[[note]]\n\n\nB.").map((e) => e.type)).toEqual([
+      "action",
+      "note",
+      "action",
+    ]);
+  });
+
+  it("ends a speech at a boneyard line, as it would at an empty line", () => {
+    expect(
+      parse("STEEL\nHello.\n/* cut */\nGoodbye.").map((e) => e.type),
+    ).toEqual(["character", "dialogue", "boneyard", "action"]);
+  });
+
   it("treats a cue with nothing after it as action", () => {
     expect(parse("STEEL")).toEqual([
       {
