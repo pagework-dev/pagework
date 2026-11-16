@@ -9,9 +9,15 @@
     "typecheck": "tsc --project ."
   },
   "dependencies": {
-    "@pagework/fountain": "workspace:*"
+    "@pagework/fountain": "workspace:*",
+    "@pagework/layout": "workspace:*",
+    "@pagework/pdf": "workspace:*",
+    "@pagework/templates": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "26.6.6"
+  },
+  "bin": {
+    "pagework": "./src/main.ts"
   }
 }

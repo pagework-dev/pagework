@@ -1,0 +1,122 @@
+=== title page ===
+21|                                        LOW TIDE
+23|                                       Written by
+25|                                 Pagework contributors
+59|               The Pagework project
+60|               Original sample script for
+61|               tests
+63|               14 November 2026
+=== page 1 ===
+06|               INT. LIGHTHOUSE - LAMP ROOM - NIGHT
+08|               The great lamp turns. Every few seconds its beam sweeps
+09|               across MAGGIE (60s), wrapped in a coat two sizes too big,
+10|               writing in a logbook by torchlight.
+12|               She checks the barometer, taps it, and writes again.
+14|                                     MAGGIE (V.O.)
+15|                         Fourteenth of November. Wind from
+16|                         the south-west, forty knots and
+17|                         rising. Glass falling. No ships.
+19|               She closes the book. Below, the sea throws itself against
+20|               the rocks.
+22|               SILENCE.
+24|               Then a RADIO crackles on the shelf.
+26|                                     RADIO (O.S.)
+27|                         Low Tide Light, Low Tide Light,
+28|                         this is coastguard. Do you read?
+30|               Maggie lifts the handset.
+32|                                     MAGGIE
+33|                               (into handset)
+34|                         Coastguard, this is Low Tide.
+35|                         Reading you fine.
+37|               She waits. Nothing.
+39|                                     MAGGIE (CONT'D)
+40|                         Coastguard?
+42|               THE STAIRWELL
+44|               Ninety-nine iron steps spiral down into the dark. Maggie
+45|               takes them two at a time, which at her age is a mistake.
+47|               INT. LIGHTHOUSE - KITCHEN - CONTINUOUS
+49|               A kettle on a gas ring. A table for one, laid for two out
+50|               of habit. TOM (40s), soaked to the skin, sits in the
+51|               second chair as if he never left.
+53|                                     TOM
+54|                         You still lay my place. Dad wrote
+55|                         to me, you know. Before. He said if
+56|                         anything happened to him you'd stay
+57|                         out here on your own until the sea
+58|                         took the whole place, and you with
+59|                         it, and he made me promise I'd come
+60|                         and talk you out of it. I said I
+61|                         would. I said it the way you say
+62|                         things to a man in a hospital bed,
+63|                                     (MORE)
+=== page 2 ===
+03|                                                                       2.
+06|                                     TOM (CONT'D)
+07|                         meaning it and not meaning it, and
+08|                         then I went back to the city and
+09|                         did nothing for three years.
+10|                               (beat)
+11|                         I'm sorry, Mags.
+13|                                     MAGGIE
+14|                         You came because the ferry's off
+15|                         and the pub's shut.
+17|                                     TOM
+18|                         That too.
+20|               Maggie sets two cups down. Hard.
+22|                       MAGGIE                        TOM
+23|               Sorry doesn't wind the        Neither do you, any more.
+24|               lamp.                         It's automatic.
+26|               The kettle starts to whistle.
+28|                                     MAGGIE
+29|                         The lamp is. The logbook isn't. The
+30|                         weather isn't. Somebody has to
+31|                         write down what the sea does, Tom,
+32|                         or it might as well not have done
+33|                         it.
+35|                                     TOM
+36|                         Who reads it?
+38|                                     MAGGIE
+39|                         I do.
+41|               She pours. Steam rises between them.
+43|                                                                  CUT TO:
+45|               EXT. LIGHTHOUSE - GALLERY - LATER
+47|               Wind. Rain coming sideways. Brother and sister grip the
+48|               rail.
+50|                       Far out, a single light blinks: red, then
+51|                       nothing, then red.
+53|                                     TOM
+54|                         Is that a ship?
+56|                                     MAGGIE
+57|                               (already moving)
+58|                         Get the logbook.
+60|               INT. LIGHTHOUSE - LAMP ROOM - MOMENTS LATER
+62|               Maggie at the radio. Tom holds the torch over the
+63|               logbook.
+=== page 3 ===
+03|                                                                       3.
+06|                                     MAGGIE
+07|                         Coastguard, Low Tide. Vessel in
+08|                         distress, bearing two-seven-zero,
+09|                         three miles. Red flare.
+11|                                     McCRAE (V.O.)
+12|                         Low Tide, coastguard. Received.
+13|                         Lifeboat launching.
+15|               Maggie lets out a breath she has been holding for three
+16|               years.
+18|                                     TOM
+19|                               (quietly)
+20|                         Somebody has to write it down.
+22|               She hands him the pen. In the margin he writes: *see
+23|               over*.
+25|                         Low tide, low tide, keep it bright,
+26|                         somebody's coming home tonight.
+28|                                     MAGGIE
+29|                         Dad used to sing that.
+31|                                     TOM
+32|                         Badly.
+34|                                     MAGGIE
+35|                         Very badly.
+37|                                                                FADE OUT.
+=== page 4 ===
+03|                                                                       4.
+06|                                        THE END

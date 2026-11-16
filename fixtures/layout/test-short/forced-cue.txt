@@ -1,0 +1,4 @@
+=== page 1 ===
+06|                                     McCLANE
+07|                         Yippie ki-yay! I got my lower-case
+08|                         C back!
