@@ -88,6 +88,16 @@ describe("paginate", () => {
     );
   });
 
+  it("ends a run of empty lines at the foot of a page", () => {
+    const text = renderText(
+      paginate(
+        parse(`One.\n\nTwo.\n\nThree.\n\nFour.${"\n".repeat(8)}Five.`),
+        short,
+      ),
+    );
+    expect(text).toMatch(/=== page 2 ===\n03\|.*\n06\| +Five\.\n$/);
+  });
+
   it("never prints notes, synopses, sections or boneyard", () => {
     const text = renderText(
       paginate(

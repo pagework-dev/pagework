@@ -149,6 +149,11 @@ export function paginate(
         emit(rows, space);
         return;
       }
+      if (block.emptyLines === true) {
+        // Empty lines that run past the foot of the page end there.
+        breakPage();
+        return;
+      }
       if (block.splittable && available >= 1 && !atTop()) {
         emit(rows.slice(0, available), space);
         rows = rows.slice(available);
@@ -170,6 +175,8 @@ export function paginate(
   blocks.forEach((block, i) => {
     if (block.kind === "page_break") {
       if (!atTop()) breakPage();
+    } else if (block.kind === "lines" && block.emptyLines === true && atTop()) {
+      // Space at the top of a page is dropped.
     } else if (block.kind === "speech") {
       placeSpeech(block.speech, block.spaceBefore);
     } else {

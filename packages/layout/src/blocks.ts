@@ -36,6 +36,12 @@ export type Block =
       kind: "lines";
       /** Scene heading, transition, centred text and dual dialogue never split. */
       splittable: boolean;
+      /**
+       * Empty lines the writer typed beyond the one between paragraphs
+       * (Fountain passes them through as empty action). Dropped at the top
+       * of a page, like any space before an element.
+       */
+      emptyLines?: true;
       isSceneHeading: boolean;
       spaceBefore: number;
       rows: RowGroup[];
@@ -371,6 +377,25 @@ export function buildBlocks(
       case "lyrics":
       case "dialogue":
       case "parenthetical": {
+        if (
+          el.type === "action" &&
+          el.content.every((span) => span.text.trim() === "")
+        ) {
+          const count =
+            el.content.reduce(
+              (n, span) => n + span.text.split("\n").length - 1,
+              0,
+            ) + 1;
+          blocks.push({
+            kind: "lines",
+            splittable: true,
+            isSceneHeading: false,
+            emptyLines: true,
+            spaceBefore: 0,
+            rows: Array.from({ length: count }, () => []),
+          });
+          break;
+        }
         // Speech parts without a cue are printed on their own.
         if (el.type === "action") actionSinceSpeech = true;
         blocks.push({
