@@ -1,0 +1,10 @@
+[
+  {"type": "character", "lines": [1, 1], "name": "STEEL", "extensions": [], "dual": null, "forced": false},
+  {"type": "parenthetical", "lines": [2, 2], "content": [{"text": "(starting the engine)"}]},
+  {"type": "dialogue", "lines": [3, 3], "content": [{"text": "So much for retirement!"}]},
+  {"type": "character", "lines": [5, 5], "name": "BRICK", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [6, 6], "content": [{"text": "I knew it."}]},
+  {"type": "parenthetical", "lines": [7, 7], "content": [{"text": "(beat)"}]},
+  {"type": "dialogue", "lines": [8, 8], "content": [{"text": "I always knew it."}]},
+  {"type": "parenthetical", "lines": [9, 9], "content": [{"text": "(quietly)"}]}
+]

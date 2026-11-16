@@ -1,0 +1,14 @@
+[
+  {"type": "scene_heading", "lines": [1, 1], "content": [{"text": "EXT. OLYMPIA CIRCUS - NIGHT"}], "sceneNumber": null, "forced": false},
+  {"type": "action", "lines": [3, 3], "content": [{"text": "...and in the distance, a light flickers."}], "forced": false},
+  {"type": "scene_heading", "lines": [5, 5], "content": [{"text": "SNIPER SCOPE POV"}], "sceneNumber": null, "forced": true},
+  {"type": "action", "lines": [7, 7], "content": [
+    {"text": "From what seems like only INCHES AWAY. "},
+    {"text": "Steel's face FILLS the ", "underline": true},
+    {"text": "Leupold Mark 4", "underline": true, "italic": true},
+    {"text": " scope", "underline": true},
+    {"text": "."}
+  ], "forced": false},
+  {"type": "scene_heading", "lines": [9, 9], "content": [{"text": "flashback to the farm"}], "sceneNumber": null, "forced": true},
+  {"type": "action", "lines": [11, 11], "content": [{"text": "..not a heading"}], "forced": false}
+]

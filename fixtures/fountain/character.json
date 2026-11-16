@@ -1,0 +1,12 @@
+[
+  {"type": "character", "lines": [1, 1], "name": "STEEL", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [2, 2], "content": [{"text": "The man's a myth!"}]},
+  {"type": "character", "lines": [4, 4], "name": "HANS", "extensions": ["on the radio"], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [5, 5], "content": [{"text": "What was it you said?"}]},
+  {"type": "character", "lines": [7, 7], "name": "MOM", "extensions": ["O. S."], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [8, 8], "content": [{"text": "Luke! Come down for supper!"}]},
+  {"type": "character", "lines": [10, 10], "name": "R2D2", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [11, 11], "content": [{"text": "Beep boop."}]},
+  {"type": "action", "lines": [13, 14], "content": [{"text": "23\nis not a character, because a cue needs a letter."}], "forced": false},
+  {"type": "action", "lines": [16, 16], "content": [{"text": "NOBODY ANSWERS"}], "forced": false}
+]

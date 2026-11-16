@@ -1,0 +1,5 @@
+[
+  {"type": "action", "lines": [1, 1], "content": [{"text": "FADE IN:"}], "forced": false},
+  {"type": "scene_heading", "lines": [3, 3], "content": [{"text": "EXT. COASTAL ROAD - DAY"}], "sceneNumber": null, "forced": false},
+  {"type": "action", "lines": [5, 5], "content": [{"text": "Gulls wheel over the road."}], "forced": false}
+]

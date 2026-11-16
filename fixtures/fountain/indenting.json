@@ -1,0 +1,11 @@
+[
+  {"type": "transition", "lines": [1, 1], "content": [{"text": "CUT TO:"}], "forced": false},
+  {"type": "scene_heading", "lines": [3, 3], "content": [{"text": "INT. GARAGE - DAY"}], "sceneNumber": null, "forced": false},
+  {"type": "action", "lines": [5, 5], "content": [{"text": "BRICK and STEEL get into Mom's PORSCHE, Steel at the wheel. They pause for a beat, the gravity of the situation catching up with them."}], "forced": false},
+  {"type": "character", "lines": [7, 7], "name": "BRICK", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [8, 8], "content": [{"text": "This is everybody we've ever put away."}]},
+  {"type": "character", "lines": [10, 10], "name": "STEEL", "extensions": [], "dual": null, "forced": false},
+  {"type": "parenthetical", "lines": [11, 11], "content": [{"text": "(starting the engine)"}]},
+  {"type": "dialogue", "lines": [12, 12], "content": [{"text": "So much for retirement!"}]},
+  {"type": "action", "lines": [14, 14], "content": [{"text": "They speed off. To destiny!"}], "forced": false}
+]

@@ -1,0 +1,12 @@
+[
+  {"type": "title_page", "lines": [1, 11], "fields": [
+    {"key": "Title", "content": [{"text": "BRICK & STEEL", "bold": true, "underline": true}, {"text": "\n"}, {"text": "FULL RETIRED", "bold": true, "underline": true}]},
+    {"key": "Credit", "content": [{"text": "Written by"}]},
+    {"key": "Author", "content": [{"text": "Stu Maschwitz"}]},
+    {"key": "Source", "content": [{"text": "Story by KTM"}]},
+    {"key": "Draft date", "content": [{"text": "1/20/2012"}]},
+    {"key": "Contact", "content": [{"text": "Next Level Productions\n1588 Mission Dr.\nSolvang, CA 93463"}]}
+  ]},
+  {"type": "scene_heading", "lines": [13, 13], "content": [{"text": "EXT. BRICK'S PATIO - DAY"}], "sceneNumber": null, "forced": false},
+  {"type": "action", "lines": [15, 15], "content": [{"text": "A gorgeous day."}], "forced": false}
+]

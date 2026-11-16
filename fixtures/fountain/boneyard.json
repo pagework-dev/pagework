@@ -1,0 +1,12 @@
+[
+  {"type": "character", "lines": [1, 1], "name": "COGNITO", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [2, 2], "content": [{"text": "Everyone's coming after you mate! Scorpio, The Boy Band, Sparrow, Point Blank Sniper..."}]},
+  {"type": "action", "lines": [4, 4], "content": [{"text": "As he rattles off the long list, Brick and Steel share a look. This is going to be BAD."}], "forced": false},
+  {"type": "transition", "lines": [6, 6], "content": [{"text": "CUT TO:"}], "forced": false},
+  {"type": "boneyard", "lines": [7, 22], "text": "\nINT. GARAGE - DAY\n\nBRICK and STEEL get into Mom's PORSCHE, Steel at the wheel. They pause for a beat, the gravity of the situation catching up with them.\n\nBRICK\nThis is everybody we've ever put away.\n\nSTEEL\n(starting the engine)\nSo much for retirement!\n\nThey speed off. To destiny!\n\nCUT TO:\n"},
+  {"type": "scene_heading", "lines": [23, 23], "content": [{"text": "EXT. PALATIAL MANSION - DAY"}], "sceneNumber": null, "forced": false},
+  {"type": "action", "lines": [25, 25], "content": [{"text": "An EXTREMELY HANDSOME MAN drinks a beer. Shirtless, unfortunately."}], "forced": false},
+  {"type": "character", "lines": [27, 27], "name": "COGNITO", "extensions": [], "dual": null, "forced": false},
+  {"type": "dialogue", "lines": [28, 28], "content": [{"text": "Everyone is after you!  Like that is my problem."}]},
+  {"type": "action", "lines": [30, 30], "content": [{"text": "They drive  fast."}], "forced": false}
+]

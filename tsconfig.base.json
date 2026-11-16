@@ -8,6 +8,9 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "noEmit": true,
+    // Relative imports name the .ts file so Node can run sources directly
+    // (type stripping) for the CLI and debug commands, with no build step.
+    "allowImportingTsExtensions": true,
 
     "strict": true,
     "noUncheckedIndexedAccess": true,

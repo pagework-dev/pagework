@@ -1,0 +1,5 @@
+[
+  {"type": "action", "lines": [1, 2], "content": [{"text": "SCANNING THE AISLES...\nWhere is that pit boss?"}], "forced": true},
+  {"type": "action", "lines": [4, 4], "content": [{"text": "EXT. NOT A SCENE HEADING"}], "forced": true},
+  {"type": "action", "lines": [6, 7], "content": [{"text": "BRICK\nruns."}], "forced": true}
+]

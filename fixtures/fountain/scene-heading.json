@@ -1,0 +1,11 @@
+[
+  {"type": "scene_heading", "lines": [1, 1], "content": [{"text": "EXT. BRICK'S POOL - DAY"}], "sceneNumber": null, "forced": false},
+  {"type": "scene_heading", "lines": [3, 3], "content": [{"text": "int. kitchen - night"}], "sceneNumber": null, "forced": false},
+  {"type": "scene_heading", "lines": [5, 5], "content": [{"text": "INT./EXT. CAR - MOVING"}], "sceneNumber": null, "forced": false},
+  {"type": "scene_heading", "lines": [7, 7], "content": [{"text": "INT/EXT CAR - MOVING"}], "sceneNumber": null, "forced": false},
+  {"type": "scene_heading", "lines": [9, 9], "content": [{"text": "I/E BUS STOP - DAWN"}], "sceneNumber": null, "forced": false},
+  {"type": "scene_heading", "lines": [11, 11], "content": [{"text": "EST. CITY SKYLINE - DUSK"}], "sceneNumber": null, "forced": false},
+  {"type": "scene_heading", "lines": [13, 13], "content": [{"text": "EXT BEACH - DAY"}], "sceneNumber": null, "forced": false},
+  {"type": "action", "lines": [15, 15], "content": [{"text": "INTERIOR DESIGNERS ARGUE."}], "forced": false},
+  {"type": "action", "lines": [17, 18], "content": [{"text": "int. hallway - night\nNobody is here."}], "forced": false}
+]

@@ -1,0 +1,11 @@
+[
+  {"type": "scene_heading", "lines": [1, 1], "content": [{"text": "INT. TRAILER HOME - DAY"}], "sceneNumber": null, "forced": false},
+  {"type": "action", "lines": [3, 3], "content": [{"text": "This is the home of THE BOY BAND, AKA DAN and JACK. They too are drinking beer, and counting the take from their last smash-and-grab. Money, drugs, and ridiculous props are strewn about the table."}], "forced": false, "notes": ["Or did we think of actual names for these guys?"]},
+  {"type": "note", "lines": [5, 5], "text": "It was supposed to be Vietnamese, right?"},
+  {"type": "character", "lines": [7, 7], "name": "JACK", "extensions": [], "dual": null, "forced": false},
+  {"type": "parenthetical", "lines": [8, 8], "content": [{"text": "(in Vietnamese, subtitled)"}]},
+  {"type": "dialogue", "lines": [9, 9], "content": [{"text": "Did you know Brick and Steel are retired?", "italic": true}]},
+  {"type": "action", "lines": [11, 14], "content": [{"text": "His hand is an inch from the receiver when the phone RINGS. Scott pauses for a moment, suspicious for some reason. He looks around. Phone ringing."}], "forced": false, "notes": ["This section needs work.\nEither that, or I need coffee.\n  \nDefinitely coffee."]},
+  {"type": "note", "lines": [16, 17], "text": "A note\non two lines."},
+  {"type": "action", "lines": [19, 19], "content": [{"text": "Unclosed [[ brackets stay as text."}], "forced": false}
+]
