@@ -1,0 +1,18 @@
+# Screenplay on US Letter. Sources and the meaning of UNVERIFIED are in
+# base/screenplay.yaml.
+
+schema: 1
+id: screenplay-us
+name: Screenplay (US Letter)
+extends: base/screenplay
+
+page:
+  size: letter # 8.5 × 11 in (ANSI/ASME Y14.1)
+  margin:
+    top: 1in # UNVERIFIED: common industry value
+    bottom: 1in # UNVERIFIED: common industry value
+    left: 1.5in # UNVERIFIED: common industry value; leaves room for binding brads
+    right: 1in # UNVERIFIED: common industry value
+
+scene_number:
+  right: 8in # UNVERIFIED: right-hand number ends 0.5 in from the edge
