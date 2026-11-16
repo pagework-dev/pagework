@@ -5,8 +5,9 @@
 #   [courier] Courier 12 pt at 6 lines per inch and 10 characters per inch is
 #             the convention every screenplay format guide starts from; the
 #             one-page-per-minute rule of thumb depends on it. Courier Prime is
-#             drawn to the same metrics (its advance width is 600 units per
-#             1000 em, i.e. 7.2 pt = 0.1 in at 12 pt; checked in packages/pdf).
+#             drawn to the same metrics: every glyph advances 1228/2048 em
+#             (7.195 pt at 12 pt, within 0.1% of 0.1 in; checked against the
+#             font files in packages/pdf).
 #   UNVERIFIED: a common industry value I could not check against a written
 #             reference while building this (no reference was reachable from
 #             the build machine). Each one is listed in the pull request that

@@ -12,6 +12,8 @@
     "typecheck": "tsc --project ."
   },
   "dependencies": {
-    "@pagework/layout": "workspace:*"
+    "@pagework/fountain": "workspace:*",
+    "@pagework/layout": "workspace:*",
+    "pdf-lib": "1.17.1"
   }
 }
