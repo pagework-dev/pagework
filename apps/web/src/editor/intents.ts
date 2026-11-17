@@ -9,11 +9,11 @@ import {
   type Transaction,
   type TransactionSpec,
 } from "@codemirror/state";
-import { updateScript, type ParsedScript } from "@pagework/fountain";
+import type { ParsedScript } from "@pagework/fountain";
 import { isScriptElement, type ScriptElement } from "./elements.ts";
 import { elementAt, type LineKind } from "./lines.ts";
 import { normalise } from "./normalise.ts";
-import { coveringEdit, scriptField } from "./script.ts";
+import { coveringEdit, scriptField, updateParsed } from "./script.ts";
 
 /**
  * Element choices the text can't hold yet. An empty line is just an empty
@@ -133,7 +133,7 @@ function keepChosenTypes(
   if (!tr.docChanged && explicit === undefined) return tr;
   const edit = coveringEdit(tr);
   const old = tr.startState.field(scriptField);
-  const next = edit === null ? old : updateScript(old, edit);
+  const next = edit === null ? old : updateParsed(old, edit);
   let [first, last] =
     edit === null
       ? [Infinity, -Infinity]

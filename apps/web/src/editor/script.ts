@@ -26,6 +26,27 @@ export function coveringEdit(tr: Transaction): TextEdit | null {
   return { from: fromA, to: toA, insert: tr.newDoc.sliceString(fromB, toB) };
 }
 
+let last: { prev: ParsedScript; edit: TextEdit; next: ParsedScript } | null =
+  null;
+
+/**
+ * updateScript, remembering the last call: the transaction filter that keeps
+ * elements as chosen parses an edit, and when it adds nothing the state field
+ * then parses the same edit again.
+ */
+export function updateParsed(prev: ParsedScript, edit: TextEdit): ParsedScript {
+  if (
+    last?.prev === prev &&
+    last.edit.from === edit.from &&
+    last.edit.to === edit.to &&
+    last.edit.insert === edit.insert
+  )
+    return last.next;
+  const next = updateScript(prev, edit);
+  last = { prev, edit, next };
+  return next;
+}
+
 /**
  * The parsed script, kept in step with the document on every transaction.
  * This is the keystroke path: only the paragraphs around an edit are parsed.
@@ -35,6 +56,6 @@ export const scriptField = StateField.define<ParsedScript>({
   update(script, tr) {
     if (!tr.docChanged) return script;
     const edit = coveringEdit(tr);
-    return edit === null ? script : updateScript(script, edit);
+    return edit === null ? script : updateParsed(script, edit);
   },
 });

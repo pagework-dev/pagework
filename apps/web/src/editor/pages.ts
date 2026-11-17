@@ -57,6 +57,8 @@ export interface PageMap {
   endFillRows: number;
   /** Page number in the footer of the last page. */
   endFooter: DrawnLine | null;
+  /** Names and places in the script, which spellcheck leaves alone. */
+  words: ReadonlySet<string>;
 }
 
 export const EMPTY_PAGE_MAP: PageMap = {
@@ -66,6 +68,7 @@ export const EMPTY_PAGE_MAP: PageMap = {
   markers: [],
   endFillRows: 0,
   endFooter: null,
+  words: new Set(),
 };
 
 function textOf(line: PageLine): string {
@@ -228,6 +231,7 @@ export function pageMap(
         ? g.capacity
         : Math.max(0, g.capacity - rowsUsed(last.lines, g)),
     endFooter: last === undefined ? null : pageNumber(last.lines, g, "footer"),
+    words: new Set(),
   };
 }
 

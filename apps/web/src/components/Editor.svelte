@@ -44,10 +44,11 @@
   }
 
   onMount(() => {
-    const report = (view: EditorView, docChanged: boolean): void => {
+    /** Scenes are listed when pages are counted, not on every keystroke. */
+    const report = (view: EditorView, scenesToo: boolean): void => {
       const { state } = view;
       const script = state.field(scriptField);
-      if (docChanged) {
+      if (scenesToo) {
         const scenes = scenesOf(script.elements);
         if (!sameScenes(scenes, session.scenes)) session.scenes = scenes;
       }
@@ -68,7 +69,7 @@
       labels: { pageBreak: (page) => t("view.pageBreak", { page }) },
       onPages: (map, view) => {
         session.pageCount = map.pages;
-        report(view, false);
+        report(view, true);
       },
     });
     const createState = (text: string): EditorState =>
@@ -85,7 +86,7 @@
               update.selectionSet ||
               update.transactions.length > 0
             )
-              report(update.view, update.docChanged);
+              report(update.view, false);
           }),
         ],
       });

@@ -123,15 +123,21 @@ export function draftWriter(
   store: DraftStore,
   onResult: (ok: boolean) => void,
   delayMs = 250,
-): { schedule: (draft: Draft) => void; flush: () => Promise<void> } {
-  let pending: Draft | null = null;
+): {
+  schedule: (draft: Draft | (() => Draft)) => void;
+  flush: () => Promise<void>;
+} {
+  // A function is called only when the draft is written, so building the
+  // draft (the whole script as text) stays off the keystroke path.
+  let pending: Draft | (() => Draft) | null = null;
   let timer: ReturnType<typeof setTimeout> | null = null;
   const flush = async (): Promise<void> => {
     if (timer !== null) clearTimeout(timer);
     timer = null;
-    const draft = pending;
+    const next = pending;
     pending = null;
-    if (draft === null) return;
+    if (next === null) return;
+    const draft = typeof next === "function" ? next() : next;
     try {
       await store.put(draft);
       const old = draftsToPrune(await store.all());

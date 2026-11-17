@@ -2,7 +2,7 @@ import { ViewPlugin, type EditorView, type ViewUpdate } from "@codemirror/view";
 import { paginate } from "@pagework/layout";
 import { pageMap, setPageMap, type PageMap } from "./pages.ts";
 import { scriptField } from "./script.ts";
-import { templateFacet } from "./view.ts";
+import { knownWords, templateFacet } from "./view.ts";
 
 /** Typing pauses this long before pages are counted again. */
 export const PAGINATION_DELAY_MS = 300;
@@ -40,8 +40,16 @@ export function pagination(onPages: (map: PageMap, view: EditorView) => void) {
         const { state } = this.view;
         const template = state.facet(templateFacet);
         if (template === null) return;
-        const model = paginate(state.field(scriptField).elements, template);
-        const map = pageMap(model, state, template.page.margin);
+        // Measured by the performance check in CI (e2e/perf.spec.ts); the
+        // timings stay in the page, like everything else (no telemetry).
+        performance.mark("pagework:paginate:start");
+        const { elements } = state.field(scriptField);
+        const model = paginate(elements, template);
+        const map = {
+          ...pageMap(model, state, template.page.margin),
+          words: knownWords(elements),
+        };
+        performance.measure("pagework:paginate", "pagework:paginate:start");
         this.view.dispatch({ effects: setPageMap.of(map) });
         onPages(map, this.view);
       }

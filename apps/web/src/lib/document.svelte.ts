@@ -104,7 +104,7 @@ export function textChanged(): void {
   changed = true;
   if (doc.saveState !== "saving")
     doc.saveState = doc.storageWorks ? "kept" : "unsaved";
-  writer.schedule(draftNow());
+  writer.schedule(draftNow);
 }
 
 /** Opens the draft store and offers to restore unsaved work from last time. */
