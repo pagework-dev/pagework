@@ -29,6 +29,8 @@
   ];
 
   let open = $state(false);
+  /** The toolbar scrolls sideways on narrow screens, so the menu is placed on the page, under its button. */
+  let place = $state({ top: 0, left: 0 });
   let button: HTMLButtonElement;
   let menu: HTMLDivElement | undefined = $state();
 
@@ -39,6 +41,8 @@
   }
 
   function show(focusLast = false): void {
+    const rect = button.getBoundingClientRect();
+    place = { top: rect.bottom + 4, left: Math.max(8, rect.left) };
     open = true;
     queueMicrotask(() => {
       const list = entries();
@@ -113,6 +117,8 @@
       bind:this={menu}
       id="file-menu"
       class="menu"
+      style:top="{place.top}px"
+      style:left="{place.left}px"
       role="menu"
       tabindex="-1"
       aria-label={t("file.menu")}
@@ -143,9 +149,7 @@
     position: relative;
   }
   .menu {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
+    position: fixed;
     z-index: 10;
     min-width: 16rem;
     padding: calc(var(--space) / 2) 0;
