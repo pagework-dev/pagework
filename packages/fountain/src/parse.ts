@@ -315,10 +315,26 @@ function pairDualDialogue(elements: Element[], cue: Character): void {
 
 /** Parses Fountain text into a typed element list. */
 export function parse(source: string): Element[] {
-  const lines = logicalLines(source);
+  return parseLines(logicalLines(source), { atStart: true });
+}
+
+export interface ParseLinesOptions {
+  /**
+   * True when the lines start the script, so they may hold a title page.
+   * False when they continue a script after a printed element and one empty
+   * line, which is where the incremental parser starts a fragment.
+   */
+  atStart: boolean;
+}
+
+/** Parses logical lines; `parse` for a whole script, `updateScript` for a fragment. */
+export function parseLines(
+  lines: LogicalLine[],
+  { atStart }: ParseLinesOptions,
+): Element[] {
   const elements: Element[] = [];
 
-  const title = parseTitlePage(lines);
+  const title = atStart ? parseTitlePage(lines) : null;
   if (title !== null) elements.push(title.titlePage);
   const start = title?.next ?? 0;
   const kinds = classify(lines, start);
@@ -326,9 +342,12 @@ export function parse(source: string): Element[] {
   // Blank lines since the last printed element. One separates paragraphs;
   // the guide passes any more through as empty action lines. A gap with a
   // note or boneyard in it closes up instead, as the guide says of notes.
-  let gap: LogicalLine[] = [];
+  // A fragment begins just after a printed element and the empty line that
+  // follows it; that line is the gap's first, so it never prints.
+  const separator: LogicalLine = { text: "", first: 0, last: 0, regions: [] };
+  let gap: LogicalLine[] = atStart ? [] : [separator];
   let gapHasHidden = false;
-  let seenContent = false;
+  let seenContent = !atStart;
 
   for (let k = 0; k < kinds.length; k++) {
     const kind = kinds[k];
