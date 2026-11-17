@@ -50,7 +50,9 @@ test("reflow view marks page breaks instead of drawing pages", async ({
   await expect(page.locator(".pw-edge-gap")).toHaveCount(0);
   // Only markers near the viewport are drawn. The sample has a title page,
   // so the first marker starts page 1 of the script.
-  await page.locator("main").evaluate((m) => m.scrollTo(0, 0));
+  await page.locator("main").evaluate((m) => {
+    m.scrollTo(0, 0);
+  });
   await expect(page.locator(".pw-page-marker").first()).toHaveText("Page 1");
   const overflow = await page
     .locator("main")
