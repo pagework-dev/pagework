@@ -8,6 +8,7 @@
   import { scriptField } from "../editor/script.ts";
   import { templateVariables } from "../editor/view.ts";
   import { t } from "../i18n/index.ts";
+  import { textChanged } from "../lib/document.svelte.ts";
   import { setEditorView } from "../lib/editor-view.ts";
   import { sceneAt, sameScenes, scenesOf } from "../lib/scenes.ts";
   import { session } from "../lib/session.svelte.ts";
@@ -61,13 +62,13 @@
         report(view, false);
       },
     });
-    const view = new EditorView({
-      parent: host,
-      state: EditorState.create({
-        doc: "",
+    const createState = (text: string): EditorState =>
+      EditorState.create({
+        doc: text,
         extensions: [
           editor.extensions,
           EditorView.updateListener.of((update) => {
+            if (update.docChanged) textChanged();
             if (
               update.docChanged ||
               update.selectionSet ||
@@ -76,9 +77,21 @@
               report(update.view, update.docChanged);
           }),
         ],
-      }),
-    });
-    setEditorView(view);
+      });
+    const view = new EditorView({ parent: host, state: createState("") });
+    const load = (text: string): void => {
+      view.setState(createState(text));
+      // A new state starts with the format the editor was created with.
+      view.dispatch({
+        effects: editor.template.reconfigure(
+          templateFacet.of(templateById(session.templateId)),
+        ),
+      });
+      session.pageCount = null;
+      report(view, true);
+      host.parentElement?.scrollTo(0, 0);
+    };
+    setEditorView(view, load);
     report(view, true);
     view.focus();
 

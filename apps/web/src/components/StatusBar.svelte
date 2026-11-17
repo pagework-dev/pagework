@@ -1,5 +1,6 @@
 <script lang="ts">
   import { t } from "../i18n/index.ts";
+  import { doc } from "../lib/document.svelte.ts";
   import { kindLabel } from "../lib/labels.ts";
   import { session } from "../lib/session.svelte.ts";
 
@@ -28,6 +29,15 @@
       : t("status.scene", { number: session.currentScene.number })}
   </span>
   <span>{kindLabel(session.currentKind)}</span>
+  <span class="spacer"></span>
+  {#if doc.busy !== null}
+    <span>{t(doc.busy === "pdf" ? "busy.pdf" : "busy.print")}</span>
+  {/if}
+  {#if doc.saveState !== "empty"}
+    <span class:warning={doc.saveState === "unsaved"}>
+      {t(`save.${doc.saveState}`)}
+    </span>
+  {/if}
 </footer>
 
 <style>
@@ -44,6 +54,12 @@
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
     overflow: hidden;
+  }
+  .spacer {
+    flex: 1;
+  }
+  .warning {
+    color: var(--state-warning);
   }
   .scene {
     overflow: hidden;

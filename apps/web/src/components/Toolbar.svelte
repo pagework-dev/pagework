@@ -2,7 +2,9 @@
   import { t } from "../i18n/index.ts";
   import { session } from "../lib/session.svelte.ts";
   import { templates } from "../lib/templates.ts";
+  import { displayName } from "../lib/document.svelte.ts";
   import ElementPicker from "./ElementPicker.svelte";
+  import FileMenu from "./FileMenu.svelte";
 </script>
 
 <header class="toolbar" aria-label={t("toolbar.label")}>
@@ -15,7 +17,9 @@
   >
     {t("toolbar.scenes")}
   </button>
+  <FileMenu />
   <ElementPicker />
+  <span class="name" title={displayName()}>{displayName()}</span>
   <span class="spacer"></span>
   <label class="field">
     <span class="label">{t("toolbar.template")}</span>
@@ -40,6 +44,13 @@
   }
   .spacer {
     flex: 1;
+  }
+  .name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
   }
   .field {
     display: flex;

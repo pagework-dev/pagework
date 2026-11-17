@@ -89,7 +89,12 @@ describe("interface text", () => {
   it("uses every message in the translation file", () => {
     const code = Object.values(sources).join("\n");
     // Keys built from data, e.g. element.<type>.
-    const dynamic = ["element.", "status.pages."];
+    const dynamic = [
+      "element.",
+      "status.pages.",
+      "save.",
+      "notice.markersRemoved.",
+    ];
     const unused = Object.keys(messages).filter(
       (key) =>
         !code.includes(`"${key}"`) &&

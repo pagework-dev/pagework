@@ -2,17 +2,31 @@ import { EditorView } from "@codemirror/view";
 
 /**
  * The one editor on the screen, for chrome that acts on it (the navigator
- * moves the cursor; the toolbar changes elements). Not reactive: components
- * read it when the writer acts.
+ * moves the cursor; the toolbar changes elements; the file menu loads text).
+ * Not reactive: components read it when the writer acts.
  */
 let current: EditorView | null = null;
+let loader: ((text: string) => void) | null = null;
 
-export function setEditorView(view: EditorView | null): void {
+export function setEditorView(
+  view: EditorView | null,
+  load: ((text: string) => void) | null = null,
+): void {
   current = view;
+  loader = load;
 }
 
 export function editorView(): EditorView | null {
   return current;
+}
+
+/** Replaces the script, starting a fresh undo history. */
+export function loadText(text: string): void {
+  loader?.(text);
+}
+
+export function currentText(): string {
+  return current?.state.doc.toString() ?? "";
 }
 
 /** Moves the cursor to the start of a 1-based line and scrolls it near the top. */
