@@ -5,6 +5,7 @@
   import { displayName } from "../lib/document.svelte.ts";
   import ElementPicker from "./ElementPicker.svelte";
   import FileMenu from "./FileMenu.svelte";
+  import ViewMenu from "./ViewMenu.svelte";
 </script>
 
 <header class="toolbar" aria-label={t("toolbar.label")}>
@@ -18,6 +19,7 @@
     {t("toolbar.scenes")}
   </button>
   <FileMenu />
+  <ViewMenu />
   <ElementPicker />
   <span class="name" title={displayName()}>{displayName()}</span>
   <span class="spacer"></span>

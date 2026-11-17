@@ -2,7 +2,12 @@
   import { EditorState } from "@codemirror/state";
   import { EditorView } from "@codemirror/view";
   import { onMount } from "svelte";
-  import { scriptEditor, templateFacet } from "../editor/index.ts";
+  import {
+    elementEditing,
+    layoutFacet,
+    scriptEditor,
+    templateFacet,
+  } from "../editor/index.ts";
   import { elementOfLine } from "../editor/intents.ts";
   import { pageAt, pageMapField } from "../editor/pages.ts";
   import { scriptField } from "../editor/script.ts";
@@ -11,7 +16,7 @@
   import { textChanged } from "../lib/document.svelte.ts";
   import { setEditorView } from "../lib/editor-view.ts";
   import { sceneAt, sameScenes, scenesOf } from "../lib/scenes.ts";
-  import { session } from "../lib/session.svelte.ts";
+  import { rememberLayout, session } from "../lib/session.svelte.ts";
   import { templateById } from "../lib/templates.ts";
 
   let host: HTMLDivElement;
@@ -57,6 +62,10 @@
     const editor = scriptEditor({
       template: templateById(session.templateId),
       label: t("editor.label"),
+      lang: navigator.language,
+      layout: session.layout,
+      showFountain: session.showFountain,
+      labels: { pageBreak: (page) => t("view.pageBreak", { page }) },
       onPages: (map, view) => {
         session.pageCount = map.pages;
         report(view, false);
@@ -68,6 +77,8 @@
         extensions: [
           editor.extensions,
           EditorView.updateListener.of((update) => {
+            if (update.focusChanged)
+              session.editorFocused = update.view.hasFocus;
             if (update.docChanged) textChanged();
             if (
               update.docChanged ||
@@ -79,14 +90,17 @@
         ],
       });
     const view = new EditorView({ parent: host, state: createState("") });
+    const currentModes = () => [
+      editor.template.reconfigure(
+        templateFacet.of(templateById(session.templateId)),
+      ),
+      editor.layout.reconfigure(layoutFacet.of(session.layout)),
+      editor.editing.reconfigure(elementEditing.of(!session.showFountain)),
+    ];
     const load = (text: string): void => {
       view.setState(createState(text));
-      // A new state starts with the format the editor was created with.
-      view.dispatch({
-        effects: editor.template.reconfigure(
-          templateFacet.of(templateById(session.templateId)),
-        ),
-      });
+      // A new state starts with the settings the editor was created with.
+      view.dispatch({ effects: currentModes() });
       session.pageCount = null;
       report(view, true);
       host.parentElement?.scrollTo(0, 0);
@@ -114,7 +128,28 @@
       });
     });
 
+    const stopModeWatch = $effect.root(() => {
+      $effect(() => {
+        const layout = session.layout;
+        const source = session.showFountain;
+        rememberLayout(layout);
+        host.classList.toggle("pw-reflow", layout === "reflow" && !source);
+        host.classList.toggle("pw-source", source);
+        if (
+          view.state.facet(layoutFacet) !== layout ||
+          view.state.facet(elementEditing) === source
+        )
+          view.dispatch({
+            effects: [
+              editor.layout.reconfigure(layoutFacet.of(layout)),
+              editor.editing.reconfigure(elementEditing.of(!source)),
+            ],
+          });
+      });
+    });
+
     return () => {
+      stopModeWatch();
       stopTemplateWatch();
       resize.disconnect();
       setEditorView(null);

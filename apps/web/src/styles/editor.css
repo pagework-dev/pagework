@@ -239,3 +239,85 @@
   bottom: auto;
   top: calc(var(--margin-top) * var(--pt) / 2);
 }
+
+/*
+ * Reflow view (DESIGN.md, Narrow screens): formatted but not paginated. The
+ * text runs the width of the screen at a readable size; indents keep their
+ * share of the line, and page breaks are markers.
+ */
+.pw-page.pw-reflow {
+  width: auto;
+  margin: 0;
+  box-shadow: none;
+  --reflow-text: calc(
+    var(--page-width) - var(--margin-left) - var(--margin-right)
+  );
+}
+.pw-reflow .cm-editor {
+  min-height: 100%;
+}
+.pw-reflow .cm-scroller {
+  font-size: max(var(--input-text), 16px);
+  line-height: 1.5;
+}
+.pw-reflow .cm-content {
+  width: 100%;
+  padding: calc(var(--space) * 2) 0;
+}
+.pw-reflow .cm-line,
+.pw-reflow .pw-page-view .cm-line.pw-scene_heading,
+.pw-reflow .pw-page-view .cm-line.pw-action,
+.pw-reflow .pw-page-view .cm-line.pw-character,
+.pw-reflow .pw-page-view .cm-line.pw-parenthetical,
+.pw-reflow .pw-page-view .cm-line.pw-dialogue,
+.pw-reflow .pw-page-view .cm-line.pw-transition,
+.pw-reflow .pw-page-view .cm-line.pw-centered,
+.pw-reflow .pw-page-view .cm-line.pw-lyrics {
+  padding-left: calc(
+    var(--space) * 2 + (100% - var(--space) * 4) * var(--indent, 0) /
+      var(--reflow-text)
+  );
+  padding-right: calc(
+    var(--space) * 2 + (100% - var(--space) * 4) * var(--right, 0) /
+      var(--reflow-text)
+  );
+}
+.pw-reflow .pw-page-view .cm-line.pw-first {
+  padding-top: calc(var(--space-before) * 1.5em);
+}
+.pw-page-marker {
+  margin: var(--space) calc(var(--space) * 2);
+  border-top: 1px dashed var(--border-control);
+  color: var(--page-muted);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  line-height: var(--line);
+  text-align: right;
+  user-select: none;
+}
+
+/* Show Fountain: the raw text, with light syntax colouring. */
+.pw-page.pw-source {
+  width: auto;
+  max-width: calc(var(--page-width) * var(--pt));
+}
+.pw-source .cm-content {
+  width: 100%;
+  padding: calc(var(--space) * 3) 0;
+}
+.pw-source .cm-line {
+  padding: 0 calc(var(--space) * 3);
+}
+.pw-source .pw-syntax,
+.pw-source .pw-note,
+.pw-source .pw-src-note,
+.pw-source .pw-src-boneyard,
+.pw-source .pw-src-section,
+.pw-source .pw-src-synopsis {
+  color: var(--page-muted);
+}
+.pw-source .pw-src-scene_heading,
+.pw-source .pw-src-character,
+.pw-source .pw-src-transition {
+  font-weight: 700;
+}

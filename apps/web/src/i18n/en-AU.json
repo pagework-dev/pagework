@@ -70,5 +70,19 @@
   "notice.pdfFailed": "Couldn’t make the PDF: {reason}",
   "notice.unencodable": "These characters aren’t in the script font and print as ?: {characters}",
   "notice.unknownReason": "the browser didn’t say why",
-  "app.title": "{name} – Pagework"
+  "app.title": "{name} – Pagework",
+  "view.menu": "View",
+  "view.page": "Page view",
+  "view.reflow": "Reflow view",
+  "view.showFountain": "Show Fountain",
+  "view.pageBreak": "Page {page}",
+  "bar.label": "Elements",
+  "bar.scene_heading": "Scene",
+  "bar.action": "Action",
+  "bar.character": "Character",
+  "bar.parenthetical": "Paren.",
+  "bar.dialogue": "Dialogue",
+  "bar.transition": "Transition",
+  "bar.centered": "Centred",
+  "bar.lyrics": "Lyrics"
 }

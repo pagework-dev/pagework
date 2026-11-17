@@ -88,6 +88,9 @@ test("shows pages, page numbers and continuation markers like the PDF", async ({
   page,
 }) => {
   await paste(page, sample);
+  // Phones open in reflow view; pages are drawn in page view.
+  await page.getByRole("button", { name: "View" }).click();
+  await page.getByRole("menuitemradio", { name: "Page view" }).click();
   const status = page.getByRole("contentinfo", { name: "Status" });
   // The committed sample PDF has four script pages on US Letter, and A4.
   await expect(status).toContainText("of 4");

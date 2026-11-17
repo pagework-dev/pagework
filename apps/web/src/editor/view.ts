@@ -14,12 +14,29 @@ import {
   type DecorationSet,
   type ViewUpdate,
 } from "@codemirror/view";
+import { plainText, type Element } from "@pagework/fountain";
 import type { Template } from "@pagework/templates";
 import { lineSyntax } from "./elements.ts";
 import { elementOfLine, elementEditing, pendingField } from "./intents.ts";
 import { elementAt, type LineKind } from "./lines.ts";
 import { pageMapField, type DrawnLine, type PageBreak } from "./pages.ts";
 import { scriptField } from "./script.ts";
+
+/** Page view shows pages as printed; reflow fits the screen with page breaks as markers. */
+export type Layout = "page" | "reflow";
+
+export const layoutFacet = Facet.define<Layout, Layout>({
+  combine: (values) => values.at(-1) ?? "page",
+});
+
+/** Words for things the editor draws, which live in the app's translation file. */
+export interface ViewLabels {
+  pageBreak: (page: number) => string;
+}
+
+export const labelsFacet = Facet.define<ViewLabels, ViewLabels>({
+  combine: (values) => values.at(-1) ?? { pageBreak: (page) => String(page) },
+});
 
 /** The template the page view lays out by. */
 export const templateFacet = Facet.define<Template, Template | null>({
@@ -83,7 +100,40 @@ const marks = {
   underline: Decoration.mark({ class: "pw-underline" }),
   note: Decoration.mark({ class: "pw-note" }),
   titleKey: Decoration.mark({ class: "pw-title-key" }),
+  syntax: Decoration.mark({ class: "pw-syntax" }),
+  /** A name or place from this script: the browser's spellcheck leaves it alone. */
+  known: Decoration.mark({ attributes: { spellcheck: "false" } }),
 };
+
+const knownWordsCache = new WeakMap<readonly Element[], Set<string>>();
+
+/**
+ * The script's own dictionary (ARCHITECTURE.md, Interface text and
+ * spelling): character names and the words of its locations. Browsers'
+ * built-in spellcheck can't be given words, so these are marked as text not
+ * to check, wherever they appear.
+ */
+export function knownWords(elements: readonly Element[]): Set<string> {
+  const cached = knownWordsCache.get(elements);
+  if (cached !== undefined) return cached;
+  const words = new Set<string>();
+  const add = (text: string): void => {
+    for (const m of text.matchAll(/\p{L}[\p{L}'’-]*/gu))
+      words.add(m[0].toUpperCase());
+  };
+  for (const el of elements) {
+    if (el.type === "character") add(el.name);
+    if (el.type === "scene_heading") {
+      const text = plainText(el.content).replace(
+        /^(INT\.?\/EXT|INT|EXT|EST|I\/E)[.\s]+/i,
+        "",
+      );
+      add(text.split(" - ")[0] ?? "");
+    }
+  }
+  knownWordsCache.set(elements, words);
+  return words;
+}
 
 class MarkerWidget extends WidgetType {
   readonly text: string;
@@ -132,6 +182,8 @@ function buildLines(view: EditorView): LineDecorations {
     pages.breaks.filter((b) => !b.midLine).map((b) => b.pos),
   );
   const markersByPos = new Map(pages.markers.map((m) => [m.pos, m.text]));
+  const formatted = state.facet(elementEditing);
+  const known = knownWords(script.elements);
   const ranges: Range<Decoration>[] = [];
   const atomic: Range<Decoration>[] = [];
   for (const { from, to } of view.visibleRanges) {
@@ -139,7 +191,7 @@ function buildLines(view: EditorView): LineDecorations {
       const line = state.doc.lineAt(pos);
       const element = elementAt(script.elements, line.number);
       const kind = elementOfLine(state, line.number);
-      const classes = [lineClass(kind)];
+      const classes = formatted ? [lineClass(kind)] : [`pw-src-${kind}`];
       if (element !== null && element.lines[0] === line.number)
         classes.push("pw-first");
       if (line.length === 0 && kind !== "blank") classes.push("pw-first");
@@ -156,6 +208,11 @@ function buildLines(view: EditorView): LineDecorations {
         const syntax = lineSyntax(line.text, element.type, forced);
         for (const [a, b] of syntax.hidden) {
           if (b <= a) continue;
+          if (!formatted) {
+            // Show Fountain: the markers stay, lightly coloured.
+            ranges.push(marks.syntax.range(line.from + a, line.from + b));
+            continue;
+          }
           const range = hidden.range(line.from + a, line.from + b);
           ranges.push(range);
           atomic.push(range);
@@ -183,7 +240,18 @@ function buildLines(view: EditorView): LineDecorations {
             );
         }
       }
-      const marker = markersByPos.get(line.to);
+      if (known.size > 0) {
+        for (const m of line.text.matchAll(/\p{L}[\p{L}'’-]*/gu)) {
+          if (known.has(m[0].toUpperCase()))
+            ranges.push(
+              marks.known.range(
+                line.from + m.index,
+                line.from + m.index + m[0].length,
+              ),
+            );
+        }
+      }
+      const marker = formatted ? markersByPos.get(line.to) : undefined;
       if (marker !== undefined)
         ranges.push(
           Decoration.widget({
@@ -213,7 +281,9 @@ const linePlugin = ViewPlugin.fromClass(
         update.startState.field(pageMapField) !==
           update.state.field(pageMapField) ||
         update.startState.field(pendingField) !==
-          update.state.field(pendingField)
+          update.state.field(pendingField) ||
+        update.startState.facet(elementEditing) !==
+          update.state.facet(elementEditing)
       )
         this.value = buildLines(update.view);
     }
@@ -228,6 +298,7 @@ const linePlugin = ViewPlugin.fromClass(
  */
 function separators(state: EditorState): DecorationSet {
   const builder = new RangeSetBuilder<Decoration>();
+  if (!state.facet(elementEditing)) return builder.finish();
   const pending = state.field(pendingField);
   let previousEmpty = true;
   let previousEnd = 0;
@@ -248,7 +319,8 @@ const separatorField = StateField.define<DecorationSet>({
   update(value, tr) {
     if (
       tr.docChanged ||
-      tr.startState.field(pendingField) !== tr.state.field(pendingField)
+      tr.startState.field(pendingField) !== tr.state.field(pendingField) ||
+      tr.startState.facet(elementEditing) !== tr.state.facet(elementEditing)
     )
       return separators(tr.state);
     return value;
@@ -345,9 +417,46 @@ function indentAt(state: EditorState, pos: number): number {
   return style?.indent ?? 0;
 }
 
+class PageMarkerWidget extends WidgetType {
+  readonly label: string;
+  constructor(label: string) {
+    super();
+    this.label = label;
+  }
+  override eq(other: PageMarkerWidget): boolean {
+    return other.label === this.label;
+  }
+  toDOM(): HTMLElement {
+    const el = document.createElement("div");
+    el.className = "pw-page-marker";
+    el.textContent = this.label;
+    return el;
+  }
+  override ignoreEvent(): boolean {
+    return true;
+  }
+}
+
 function pageEdges(state: EditorState): DecorationSet {
+  if (!state.facet(elementEditing)) return Decoration.none;
   const map = state.field(pageMapField);
   const ranges: Range<Decoration>[] = [];
+  if (state.facet(layoutFacet) === "reflow") {
+    // Reflow: a marker where each page starts, at the start of its line.
+    const labels = state.facet(labelsFacet);
+    map.breaks.forEach((edge, i) => {
+      const page = map.hasTitlePage ? i + 1 : i + 2;
+      const line = state.doc.lineAt(Math.min(edge.pos, state.doc.length));
+      ranges.push(
+        Decoration.widget({
+          widget: new PageMarkerWidget(labels.pageBreak(page)),
+          side: -1,
+          block: true,
+        }).range(line.from),
+      );
+    });
+    return Decoration.set(ranges, true);
+  }
   for (const edge of map.breaks) {
     const pos = Math.min(edge.pos, state.doc.length);
     const widget = new PageEdgeWidget(
@@ -377,7 +486,11 @@ function pageEdges(state: EditorState): DecorationSet {
 const pageEdgeField = StateField.define<DecorationSet>({
   create: pageEdges,
   update(value, tr) {
-    if (tr.startState.field(pageMapField) !== tr.state.field(pageMapField))
+    if (
+      tr.startState.field(pageMapField) !== tr.state.field(pageMapField) ||
+      tr.startState.facet(elementEditing) !== tr.state.facet(elementEditing) ||
+      tr.startState.facet(layoutFacet) !== tr.state.facet(layoutFacet)
+    )
       return pageEdges(tr.state);
     return tr.docChanged ? value.map(tr.changes) : value;
   },
@@ -395,7 +508,7 @@ export function pageView(): Extension {
     pageEdgeField,
     EditorView.editorAttributes.of((view) => ({
       class: view.state.facet(elementEditing)
-        ? "pw-page-view"
+        ? `pw-page-view pw-layout-${view.state.facet(layoutFacet)}`
         : "pw-source-view",
     })),
   ];
