@@ -164,7 +164,7 @@ export async function renderPdf(
           showText(font.font.encodeText(text)),
           endText(),
         );
-        const width = [...text].length * advance * size;
+        const width = Array.from(text).length * advance * size;
         if (span.underline === true) {
           const position =
             (font.info.underlinePosition / font.info.unitsPerEm) * size;
