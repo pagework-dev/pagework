@@ -22,5 +22,16 @@ Pagework includes or depends on the following third-party work. Each keeps its o
 | `@pdf-lib/upng` (via pdf-lib) | 1.0.1 | MIT | `packages/pdf` |
 | `yaml` | 2.9.1 | ISC | `packages/templates` |
 | `@cfworker/json-schema` | 4.1.6 | MIT | `packages/templates` |
+| `svelte` | 5.57.3 | MIT | `apps/web` |
+| `clsx` (via svelte) | 2.1.1 | MIT | `apps/web` |
+| `esm-env` (via svelte) | 1.2.2 | MIT | `apps/web` |
+| `@codemirror/state` | 6.7.6 | MIT | `apps/web` |
+| `@codemirror/view` | 6.43.15 | MIT | `apps/web` |
+| `@codemirror/commands` | 6.11.1 | MIT | `apps/web` |
+| `@marijn/find-cluster-break` (via @codemirror/state) | 1.0.4 | MIT | `apps/web` |
+| `crelt`, `style-mod`, `w3c-keyname` (via @codemirror/view) | 1.0.7, 4.1.4, 2.2.8 | MIT | `apps/web` |
+| `@codemirror/language`, `@lezer/common`, `@lezer/highlight`, `@lezer/lr` (via @codemirror/commands) | 6.13.1, 1.5.5, 1.2.5, 1.4.12 | MIT | Installed with `@codemirror/commands`; not in the built app, which uses none of their code |
 
-Development-only tools (TypeScript, ESLint, Prettier, Vite, Vitest, `@types/node`) are not shipped and are listed in the `package.json` files.
+The browser app (`apps/web`) is built into static files that include the packages above and the Courier Prime files. Templates reach the browser as JSON resolved at build time, so `yaml` and `@cfworker/json-schema` are not in the browser bundle.
+
+Development-only tools (TypeScript, ESLint, Prettier and `prettier-plugin-svelte`, Vite and `@sveltejs/vite-plugin-svelte`, Vitest, `svelte-check`, Playwright, `@types/node`) are not shipped and are listed in the `package.json` files.
