@@ -47,11 +47,17 @@ export function normaliseNewlines(source: string): string {
   return source.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
 }
 
-export function logicalLines(source: string): LogicalLine[] {
+/** `firstLine` numbers the lines of a fragment by their place in the script. */
+export function logicalLines(source: string, firstLine = 1): LogicalLine[] {
   const src = normaliseNewlines(source);
   const out: LogicalLine[] = [];
-  let line = 1;
-  let current: LogicalLine = { text: "", first: 1, last: 1, regions: [] };
+  let line = firstLine;
+  let current: LogicalLine = {
+    text: "",
+    first: firstLine,
+    last: firstLine,
+    regions: [],
+  };
   let i = 0;
   for (;;) {
     if (i >= src.length || src[i] === "\n") {
