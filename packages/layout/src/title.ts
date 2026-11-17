@@ -39,7 +39,7 @@ function areaLines(
       });
     }
     blocks.push(
-      wrapSpans(content, max).map((spans) => {
+      wrapSpans(content, max).map(({ spans }) => {
         const width = spanLength(spans) * g.charWidth;
         const x =
           placement === "center"

@@ -57,11 +57,18 @@ export function sliceSpans(
   return out;
 }
 
-export function wrapSpans(spans: readonly Span[], max: number): Span[][] {
+/** Wrapped lines, each with the offset in the text where it starts. */
+export function wrapSpans(
+  spans: readonly Span[],
+  max: number,
+): { spans: Span[]; start: number }[] {
   const text = spans.map((s) => s.text).join("");
   return wrapText(text, Math.max(1, max)).map(({ start, end, indent }) => {
     const sliced = sliceSpans(spans, start, end);
-    return indent > 0 ? [{ text: " ".repeat(indent) }, ...sliced] : sliced;
+    return {
+      spans: indent > 0 ? [{ text: " ".repeat(indent) }, ...sliced] : sliced,
+      start,
+    };
   });
 }
 

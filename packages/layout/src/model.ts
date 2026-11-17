@@ -15,6 +15,17 @@ export type LineRole =
   | "page_number"
   | "title_page";
 
+/** Where a printed line's text comes from in the script. */
+export interface SourcePoint {
+  /** 1-based source line. */
+  line: number;
+  /**
+   * 0-based column in that line's printed text: after Fountain markers are
+   * removed, before the template changes case or adds a prefix.
+   */
+  column: number;
+}
+
 export interface PageLine {
   /** Distance from the left edge of the page to the start of the text, in points. */
   x: number;
@@ -22,6 +33,13 @@ export interface PageLine {
   y: number;
   spans: Span[];
   role: LineRole;
+  /** Absent on lines the paginator adds: (MORE), page and scene numbers. */
+  source?: SourcePoint;
+  /**
+   * On a cue, the continuation marker the paginator added after it, such as
+   * "(CONT'D)" (ADR 0011). The editor shows it as a decoration.
+   */
+  marker?: string;
 }
 
 export interface Page {
