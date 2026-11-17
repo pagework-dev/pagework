@@ -29,3 +29,20 @@ jobs:
       - name: Install Chromium for the browser tests
         run: pnpm --filter @pagework/web exec playwright install --with-deps chromium
       - run: pnpm e2e
+
+  # ARCHITECTURE.md, Performance budgets, on a generated 120-page script with
+  # Chromium's CPU throttled 4x. Its own job, so a budget miss is reported
+  # separately from correctness.
+  performance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install Chromium for the browser tests
+        run: pnpm --filter @pagework/web exec playwright install --with-deps chromium
+      - run: pnpm perf
