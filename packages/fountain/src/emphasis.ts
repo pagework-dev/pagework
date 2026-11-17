@@ -6,6 +6,16 @@ interface Token {
   ch: string;
   /** An unescaped `*` or `_` that may open or close emphasis. */
   marker: boolean;
+  /** Offset of the character in the line. */
+  at: number;
+  /** Offset of the backslash that escaped it, if one did. */
+  escape?: number;
+}
+
+/** Receives the line's characters in order, as text or as consumed markers. */
+interface Sink {
+  text(token: Token, style: Style): void;
+  marker(token: Token): void;
 }
 
 function isSpace(token: Token | undefined): boolean {
@@ -38,10 +48,10 @@ function tokenise(line: string): Token[] {
     const ch = line.charAt(i);
     const next = line.charAt(i + 1);
     if (ch === "\\" && (next === "*" || next === "_" || next === "\\")) {
-      tokens.push({ ch: next, marker: false });
+      tokens.push({ ch: next, marker: false, at: i + 1, escape: i });
       i++;
     } else {
-      tokens.push({ ch, marker: ch === "*" || ch === "_" });
+      tokens.push({ ch, marker: ch === "*" || ch === "_", at: i });
     }
   }
   return tokens;
@@ -100,12 +110,13 @@ function parseRange(
   start: number,
   end: number,
   style: Style,
-  out: Span[],
+  sink: Sink,
 ): void {
-  let text = "";
-  const flush = (): void => {
-    if (text !== "") out.push({ text, ...style });
-    text = "";
+  const markers = (from: number, count: number): void => {
+    for (let k = from; k < from + count; k++) {
+      const token = tokens[k];
+      if (token !== undefined) sink.marker(token);
+    }
   };
   let i = start;
   while (i < end) {
@@ -116,44 +127,48 @@ function parseRange(
       if (run <= 3 && canOpen(tokens, i, run)) {
         const closer = findStarCloser(tokens, i + run, end, run);
         if (closer > i + run) {
-          flush();
           const add: Style =
             run === 1
               ? { italic: true }
               : run === 2
                 ? { bold: true }
                 : { bold: true, italic: true };
-          parseRange(tokens, i + run, closer, withStyle(style, add), out);
+          markers(i, run);
+          parseRange(tokens, i + run, closer, withStyle(style, add), sink);
+          markers(closer, run);
           i = closer + run;
           continue;
         }
       }
-      text += "*".repeat(run);
+      for (let k = i; k < i + run; k++) {
+        const token = tokens[k];
+        if (token !== undefined) sink.text(token, style);
+      }
       i += run;
     } else if (t.marker && t.ch === "_") {
       const closer = canOpen(tokens, i, 1)
         ? findUnderscoreCloser(tokens, i + 1, end)
         : -1;
       if (closer > i + 1) {
-        flush();
+        markers(i, 1);
         parseRange(
           tokens,
           i + 1,
           closer,
           withStyle(style, { underline: true }),
-          out,
+          sink,
         );
+        markers(closer, 1);
         i = closer + 1;
         continue;
       }
-      text += "_";
+      sink.text(t, style);
       i++;
     } else {
-      text += t.ch;
+      sink.text(t, style);
       i++;
     }
   }
-  flush();
 }
 
 function sameStyle(a: Span, b: Span): boolean {
@@ -183,8 +198,80 @@ export function mergeSpans(spans: Span[]): Span[] {
 export function parseInline(line: string): Span[] {
   const tokens = tokenise(line);
   const out: Span[] = [];
-  parseRange(tokens, 0, tokens.length, {}, out);
+  parseRange(
+    tokens,
+    0,
+    tokens.length,
+    {},
+    {
+      text(token, style) {
+        out.push({ text: token.ch, ...style });
+      },
+      marker() {
+        // Markers become emphasis, not text.
+      },
+    },
+  );
   return mergeSpans(out);
+}
+
+/** A run of a line's source text with one combination of emphasis. */
+export interface StyledRange {
+  from: number;
+  to: number;
+  bold?: true;
+  italic?: true;
+  underline?: true;
+}
+
+export interface InlineMarks {
+  /** Offsets of emphasis markers and escaping backslashes, which don't print. */
+  hidden: number[];
+  /** Emphasised text, in source offsets. Plain text is not listed. */
+  styled: StyledRange[];
+}
+
+/**
+ * Where a line's emphasis markers are, for the editor, which hides them and
+ * shows the emphasis. Agrees with parseInline by construction: both read the
+ * same tokens through parseRange.
+ */
+export function inlineMarks(line: string): InlineMarks {
+  const tokens = tokenise(line);
+  const hidden: number[] = [];
+  const styled: StyledRange[] = [];
+  parseRange(
+    tokens,
+    0,
+    tokens.length,
+    {},
+    {
+      text(token, style) {
+        if (token.escape !== undefined) hidden.push(token.escape);
+        if (
+          style.bold !== true &&
+          style.italic !== true &&
+          style.underline !== true
+        )
+          return;
+        const last = styled.at(-1);
+        if (
+          last?.to === token.at &&
+          last.bold === style.bold &&
+          last.italic === style.italic &&
+          last.underline === style.underline
+        ) {
+          last.to = token.at + 1;
+        } else {
+          styled.push({ from: token.at, to: token.at + 1, ...style });
+        }
+      },
+      marker(token) {
+        hidden.push(token.at);
+      },
+    },
+  );
+  return { hidden, styled };
 }
 
 export function joinLines(lines: string[]): Span[] {
