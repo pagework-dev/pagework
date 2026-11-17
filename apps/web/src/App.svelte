@@ -2,6 +2,7 @@
   import Editor from "./components/Editor.svelte";
   import SceneNavigator from "./components/SceneNavigator.svelte";
   import StatusBar from "./components/StatusBar.svelte";
+  import ElementBar from "./components/ElementBar.svelte";
   import NoticeBar from "./components/NoticeBar.svelte";
   import SaveQuestion from "./components/SaveQuestion.svelte";
   import Toolbar from "./components/Toolbar.svelte";
@@ -56,6 +57,7 @@
   <StatusBar />
 </div>
 <SaveQuestion />
+<ElementBar />
 
 <style>
   .app {
