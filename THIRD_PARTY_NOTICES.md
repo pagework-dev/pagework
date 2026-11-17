@@ -20,6 +20,7 @@ Pagework includes or depends on the following third-party work. Each keeps its o
 | `tslib` (via pdf-lib) | 1.14.1 | 0BSD | `packages/pdf` |
 | `@pdf-lib/standard-fonts` (via pdf-lib) | 1.0.0 | MIT | `packages/pdf` |
 | `@pdf-lib/upng` (via pdf-lib) | 1.0.1 | MIT | `packages/pdf` |
+| `@pdf-lib/fontkit` | 1.1.1 | MIT | `packages/pdf` |
 | `yaml` | 2.9.1 | ISC | `packages/templates` |
 | `@cfworker/json-schema` | 4.1.6 | MIT | `packages/templates` |
 | `svelte` | 5.57.3 | MIT | `apps/web` |
