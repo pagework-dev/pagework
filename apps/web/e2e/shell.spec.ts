@@ -13,15 +13,16 @@ test.beforeEach(async ({ page }) => {
 test("opens on an empty page with the cursor on it", async ({ page }) => {
   await expect(page.getByRole("textbox", { name: "Script" })).toBeFocused();
   await expect(page.getByRole("contentinfo", { name: "Status" })).toContainText(
-    "1 page",
+    "Page 1 of 1",
   );
 });
 
 test("lists scene headings in the navigator as they are written", async ({
   page,
 }) => {
+  // Enter after action, then Enter on the empty line, gives a scene heading.
   await page.keyboard.type(
-    "INT. HARBOUR OFFICE - NIGHT\n\nRain.\n\nEXT. SEA WALL - DAY\n\nWind.",
+    "INT. HARBOUR OFFICE - NIGHT\nRain.\n\nEXT. SEA WALL - DAY\nWind.",
   );
   const width = page.viewportSize()?.width ?? 0;
   if (width < 900) await page.getByRole("button", { name: "Scenes" }).click();

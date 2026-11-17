@@ -1,0 +1,241 @@
+/*
+ * The script page. Every length is in points from the template (the
+ * --margin-*, --indent-* and other variables set by editor/view.ts), times
+ * --pt, the size of a point on screen at the current zoom. Courier Prime is
+ * used here and nowhere else (DESIGN.md, Type).
+ */
+.pw-page {
+  --pt: 1.3333px;
+  overflow-x: clip;
+  --lh: calc(var(--line-height) * var(--pt));
+  width: calc(var(--page-width) * var(--pt));
+  margin: calc(var(--space) * 3) auto;
+  background: var(--page);
+  color: var(--page-text);
+  box-shadow: var(--page-shadow);
+}
+
+.pw-page .cm-editor {
+  min-height: calc(var(--page-height) * var(--pt));
+}
+.pw-page .cm-editor.cm-focused {
+  outline: none;
+}
+.pw-page .cm-scroller {
+  font-family: var(--font-script);
+  font-size: calc(var(--font-size) * var(--pt));
+  line-height: var(--lh);
+  overflow: visible;
+}
+.pw-page .cm-content {
+  /* Fixed to the page: a page edge drawn inside a line must not widen it. */
+  flex: none;
+  width: calc(var(--page-width) * var(--pt));
+  padding: calc(var(--margin-top) * var(--pt)) 0 0;
+  caret-color: var(--page-text);
+}
+.pw-page .cm-line {
+  padding: 0 calc(var(--margin-right) * var(--pt)) 0
+    calc(var(--margin-left) * var(--pt));
+}
+.pw-page .cm-cursor {
+  border-left-color: var(--page-text);
+}
+.pw-page .cm-selectionBackground,
+.pw-page .cm-focused .cm-selectionBackground,
+.pw-page .cm-content ::selection {
+  background: var(--page-selection);
+}
+
+/* Each element placed and styled as the template prints it. */
+.pw-page-view .cm-line.pw-scene_heading,
+.pw-page-view .cm-line.pw-action,
+.pw-page-view .cm-line.pw-character,
+.pw-page-view .cm-line.pw-parenthetical,
+.pw-page-view .cm-line.pw-dialogue,
+.pw-page-view .cm-line.pw-transition,
+.pw-page-view .cm-line.pw-centered,
+.pw-page-view .cm-line.pw-lyrics {
+  padding-left: calc((var(--margin-left) + var(--indent)) * var(--pt));
+  padding-right: calc((var(--margin-right) + var(--right)) * var(--pt));
+  text-align: var(--align);
+  text-transform: var(--case);
+  font-weight: var(--weight);
+  font-style: var(--slant);
+  text-decoration: var(--underline);
+}
+.pw-page-view .cm-line.pw-first {
+  padding-top: calc(var(--space-before) * var(--lh));
+}
+.pw-page-view .cm-line.pw-page-top {
+  padding-top: 0;
+}
+.pw-scene_heading {
+  --indent: var(--indent-scene_heading);
+  --right: var(--right-scene_heading);
+  --space-before: var(--space-scene_heading);
+  --align: var(--align-scene_heading);
+  --case: var(--case-scene_heading);
+  --weight: var(--weight-scene_heading);
+  --slant: var(--slant-scene_heading);
+  --underline: var(--underline-scene_heading);
+}
+.pw-action {
+  --indent: var(--indent-action);
+  --right: var(--right-action);
+  --space-before: var(--space-action);
+  --align: var(--align-action);
+  --case: var(--case-action);
+  --weight: var(--weight-action);
+  --slant: var(--slant-action);
+  --underline: var(--underline-action);
+}
+.pw-character {
+  --indent: var(--indent-character);
+  --right: var(--right-character);
+  --space-before: var(--space-character);
+  --align: var(--align-character);
+  /* Cues print as written; the editor capitalises them as they are typed. */
+  --case: none;
+  --weight: var(--weight-character);
+  --slant: var(--slant-character);
+  --underline: var(--underline-character);
+}
+.pw-parenthetical {
+  --indent: var(--indent-parenthetical);
+  --right: var(--right-parenthetical);
+  --space-before: var(--space-parenthetical);
+  --align: var(--align-parenthetical);
+  --case: var(--case-parenthetical);
+  --weight: var(--weight-parenthetical);
+  --slant: var(--slant-parenthetical);
+  --underline: var(--underline-parenthetical);
+}
+.pw-dialogue {
+  --indent: var(--indent-dialogue);
+  --right: var(--right-dialogue);
+  --space-before: var(--space-dialogue);
+  --align: var(--align-dialogue);
+  --case: var(--case-dialogue);
+  --weight: var(--weight-dialogue);
+  --slant: var(--slant-dialogue);
+  --underline: var(--underline-dialogue);
+}
+.pw-transition {
+  --indent: var(--indent-transition);
+  --right: var(--right-transition);
+  --space-before: var(--space-transition);
+  --align: var(--align-transition);
+  --case: var(--case-transition);
+  --weight: var(--weight-transition);
+  --slant: var(--slant-transition);
+  --underline: var(--underline-transition);
+}
+.pw-centered {
+  --indent: var(--indent-centered);
+  --right: var(--right-centered);
+  --space-before: var(--space-centered);
+  --align: var(--align-centered);
+  --case: var(--case-centered);
+  --weight: var(--weight-centered);
+  --slant: var(--slant-centered);
+  --underline: var(--underline-centered);
+}
+.pw-lyrics {
+  --indent: var(--indent-lyrics);
+  --right: var(--right-lyrics);
+  --space-before: var(--space-lyrics);
+  --align: var(--align-lyrics);
+  --case: var(--case-lyrics);
+  --weight: var(--weight-lyrics);
+  --slant: var(--slant-lyrics);
+  --underline: var(--underline-lyrics);
+}
+
+/* Lines that don't print: notes, sections, synopses, boneyard. */
+.pw-page-view .cm-line.pw-muted,
+.pw-page-view .pw-note,
+.pw-page-view .pw-title-key {
+  color: var(--page-muted);
+}
+.pw-page-view .cm-line.pw-muted {
+  font-style: italic;
+}
+/* Dual dialogue is edited one speech after the other and printed side by side. */
+.pw-page-view .cm-line.pw-dual {
+  box-shadow: inset calc(var(--margin-left) * var(--pt) - 6px) 0 0 -4px
+    var(--page-muted);
+}
+
+.pw-bold {
+  font-weight: 700;
+}
+.pw-italic {
+  font-style: italic;
+}
+.pw-underline {
+  text-decoration: underline;
+}
+.pw-continued,
+.pw-suggestion {
+  color: var(--page-muted);
+}
+.pw-suggestion {
+  pointer-events: none;
+}
+
+/* Page edges: the foot of one page, the desk, the head of the next. */
+.pw-edge {
+  position: relative;
+  margin-left: calc(-1 * var(--edge-indent, 0) * var(--pt));
+  width: calc(var(--page-width) * var(--pt));
+  font-family: var(--font-script);
+  text-transform: none;
+  font-weight: 400;
+  font-style: normal;
+  text-align: left;
+  cursor: default;
+  user-select: none;
+}
+.pw-edge-inline {
+  display: block;
+  margin-left: calc(
+    -1 * (var(--margin-left) + var(--edge-indent, 0)) * var(--pt)
+  );
+}
+.pw-edge-fill,
+.pw-edge-cue {
+  position: relative;
+  height: calc(var(--rows) * var(--lh));
+}
+.pw-edge-bottom {
+  position: relative;
+  height: calc(var(--margin-bottom) * var(--pt));
+}
+.pw-edge-top {
+  position: relative;
+  height: calc(var(--margin-top) * var(--pt));
+}
+.pw-edge-gap {
+  height: calc(var(--space) * 3);
+  background: var(--desk);
+  box-shadow:
+    inset 0 4px 4px -4px var(--border-control),
+    inset 0 -4px 4px -4px var(--border-control);
+}
+.pw-drawn {
+  position: absolute;
+  left: calc(var(--x) * var(--pt));
+  top: calc(var(--row) * var(--lh));
+  white-space: pre;
+  color: var(--page-text);
+}
+.pw-edge-bottom .pw-drawn,
+.pw-edge-top .pw-drawn {
+  top: auto;
+  bottom: calc(var(--margin-bottom) * var(--pt) / 2);
+}
+.pw-edge-top .pw-drawn {
+  bottom: auto;
+  top: calc(var(--margin-top) * var(--pt) / 2);
+}

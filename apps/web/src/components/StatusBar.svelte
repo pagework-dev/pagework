@@ -1,17 +1,27 @@
 <script lang="ts">
   import { t } from "../i18n/index.ts";
-  import { session } from "../lib/session.svelte.ts";
   import { kindLabel } from "../lib/labels.ts";
+  import { session } from "../lib/session.svelte.ts";
+
+  const pages = $derived.by(() => {
+    if (session.pageCount === null) return t("status.pageCounting");
+    if (session.currentPage === 0) return t("status.titlePage");
+    if (session.currentPage === null)
+      return t(
+        session.pageCount === 1 ? "status.pages.one" : "status.pages.other",
+        {
+          pages: session.pageCount,
+        },
+      );
+    return t("status.page", {
+      page: session.currentPage,
+      pages: session.pageCount,
+    });
+  });
 </script>
 
 <footer class="status" aria-label={t("status.label")}>
-  <span>
-    {session.pageCount === null
-      ? t("status.pageCounting")
-      : t(session.pageCount === 1 ? "status.pages.one" : "status.pages.other", {
-          pages: session.pageCount,
-        })}
-  </span>
+  <span>{pages}</span>
   <span class="scene">
     {session.currentScene === null
       ? t("status.noScene")

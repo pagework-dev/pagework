@@ -27,5 +27,11 @@
   "status.pages.other": "{pages} pages",
   "status.pageCounting": "Counting pages…",
   "status.scene": "Scene {number}",
-  "status.noScene": "Before the first scene"
+  "status.noScene": "Before the first scene",
+  "toolbar.element": "Element",
+  "picker.withShortcut": "{element} ({shortcut})",
+  "shortcut.mac": "⌘{key}",
+  "shortcut.other": "Ctrl+{key}",
+  "status.page": "Page {page} of {pages}",
+  "status.titlePage": "Title page"
 }

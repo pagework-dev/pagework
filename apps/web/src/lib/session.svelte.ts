@@ -5,8 +5,10 @@ import type { LineKind } from "../editor/lines.ts";
 export interface Session {
   templateId: string;
   scenes: SceneEntry[];
-  /** Null while pages are being counted. */
+  /** Null until pages have been counted. */
   pageCount: number | null;
+  /** Page the cursor is on; 0 on the title page. */
+  currentPage: number | null;
   currentKind: LineKind;
   currentScene: SceneEntry | null;
   /** On narrow screens the navigator is a sheet. */
@@ -21,6 +23,7 @@ export const session = $state<Session>({
   templateId: defaultTemplateId(navigator.language),
   scenes: [],
   pageCount: null,
+  currentPage: null,
   currentKind: "blank",
   currentScene: null,
   navigatorOpen: false,

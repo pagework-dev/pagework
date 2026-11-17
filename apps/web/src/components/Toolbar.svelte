@@ -2,6 +2,7 @@
   import { t } from "../i18n/index.ts";
   import { session } from "../lib/session.svelte.ts";
   import { templates } from "../lib/templates.ts";
+  import ElementPicker from "./ElementPicker.svelte";
 </script>
 
 <header class="toolbar" aria-label={t("toolbar.label")}>
@@ -14,6 +15,7 @@
   >
     {t("toolbar.scenes")}
   </button>
+  <ElementPicker />
   <span class="spacer"></span>
   <label class="field">
     <span class="label">{t("toolbar.template")}</span>
