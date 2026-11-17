@@ -94,16 +94,25 @@ test("shows pages, page numbers and continuation markers like the PDF", async ({
   const status = page.getByRole("contentinfo", { name: "Status" });
   // The committed sample PDF has four script pages on US Letter, and A4.
   await expect(status).toContainText("of 4");
-  // Only pages near the viewport are drawn, so check the first edges, then the last.
-  await page.locator("main").evaluate((m) => {
-    m.scrollTo(0, 0);
-  });
-  await expect(page.locator(".pw-edge-top .pw-drawn").first()).toHaveText("2.");
-  await expect(page.locator(".pw-continued").first()).toHaveText(" (CONT'D)");
-  await page.locator("main").evaluate((m) => {
-    m.scrollTo(0, m.scrollHeight);
-  });
-  await expect(page.locator(".pw-edge-top .pw-drawn").last()).toHaveText("4.");
+  // Only pages near the viewport are drawn: scroll through, collecting them.
+  const main = page.locator("main");
+  const headers = new Set<string>();
+  const continued = new Set<string>();
+  const height = await main.evaluate((m) => m.scrollHeight);
+  for (let y = 0; y <= height; y += 300) {
+    await main.evaluate((m, top) => {
+      m.scrollTo(0, top);
+    }, y);
+    await page.waitForTimeout(100);
+    for (const text of await page
+      .locator(".pw-edge-top .pw-drawn")
+      .allTextContents())
+      headers.add(text);
+    for (const text of await page.locator(".pw-continued").allTextContents())
+      continued.add(text);
+  }
+  expect([...headers].sort()).toEqual(["2.", "3.", "4."]);
+  expect([...continued]).toEqual([" (CONT'D)"]);
   const overflow = await page
     .locator("main")
     .evaluate((m) => m.scrollWidth - m.clientWidth);
