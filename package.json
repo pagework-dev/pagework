@@ -19,7 +19,8 @@
     "parse": "node apps/cli/src/main.ts parse",
     "templates:test": "vitest run --project @pagework/templates",
     "pagework": "node apps/cli/src/main.ts",
-    "e2e": "pnpm --filter @pagework/web e2e"
+    "e2e": "pnpm --filter @pagework/web e2e",
+    "perf": "pnpm --filter @pagework/web perf"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

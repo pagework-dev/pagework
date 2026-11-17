@@ -10,7 +10,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "svelte-check --tsconfig ./tsconfig.app.json --fail-on-warnings && tsc --project tsconfig.node.json",
-    "e2e": "playwright test"
+    "e2e": "playwright test --project desktop --project tablet --project phone",
+    "perf": "vite build && node build/bundle-size.ts && PW_PERF=1 playwright test --project perf"
   },
   "dependencies": {
     "@codemirror/commands": "6.11.1",

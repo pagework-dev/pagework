@@ -6,6 +6,8 @@ const PORT = 4173;
 
 export default defineConfig({
   testDir: "e2e",
+  // The performance checks run on their own (pnpm perf), on desktop only.
+  testIgnore: process.env.PW_PERF === undefined ? /perf\.spec\.ts/ : [],
   fullyParallel: true,
   forbidOnly: process.env.CI !== undefined,
   reporter: process.env.CI === undefined ? "list" : "github",
@@ -14,6 +16,15 @@ export default defineConfig({
     trace: "off",
   },
   projects: [
+    {
+      // Performance budgets (e2e/perf.spec.ts), on desktop Chromium only.
+      name: "perf",
+      testMatch: /perf\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1280, height: 800 },
+      },
+    },
     {
       name: "desktop",
       use: {
