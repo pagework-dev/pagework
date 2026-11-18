@@ -11,21 +11,17 @@ How `apps/web` reaches **https://app.pagework.dev**. This covers the 0.2 web app
 
 ## One-off setup (an account owner does this once)
 
-### 1. Cloudflare: create the Pages project
-1. In the Cloudflare dashboard, open **Workers & Pages › Create › Pages**. Choose **Direct Upload** (or "Upload assets"), not "Connect to Git": GitHub Actions does the building, so Cloudflare needs no access to the repository.
-2. Name the project **`pagework-app`**. If you choose another name, change `--project-name` in `deploy.yml` to match.
-3. Upload anything to finish creating it (for example a folder with one `index.html`). The first real deployment replaces it.
-4. Under **Settings**, set the production branch to **`main`**.
+### 1. Cloudflare: the Pages project
+The Deploy workflow creates the Pages project **`pagework-app`** the first time it runs, so you don't need to make it by hand. (If you name it differently, change `pagework-app` in `deploy.yml`.)
 
-Or with Wrangler, from any machine:
-```bash
-npx wrangler@4.162.0 pages project create pagework-app --production-branch=main
-```
+Cloudflare's dashboard now steers new projects towards **Workers**. A Worker with the same name is a different thing, and the deploy can't use it. If you made one while following an earlier version of this guide, delete it or leave it unused.
 
-### 2. Cloudflare: the custom domain
-1. In the project, open **Custom domains › Set up a custom domain** and enter `app.pagework.dev`.
+### 2. Cloudflare: the custom domain (after the first successful deploy)
+1. In **Workers & Pages**, open **`pagework-app`** (it's marked as a Pages project) › **Custom domains › Set up a custom domain**, and enter `app.pagework.dev`.
 2. If `pagework.dev` uses Cloudflare DNS, Cloudflare adds the record itself. If not, add the DNS record it shows you at your DNS provider: a **CNAME** from `app` to `pagework-app.pages.dev`.
 3. Wait until the domain shows **Active**. Cloudflare issues the HTTPS certificate.
+
+If `app.pagework.dev` is already attached to something else in Cloudflare (a Worker, for instance), remove it there first.
 
 ### 3. Cloudflare: an API token for GitHub Actions
 1. **My Profile › API Tokens › Create Token › Create Custom Token.**
@@ -43,7 +39,7 @@ In `pagework-dev/pagework` › **Settings**:
 Environment secrets are only available to jobs that use the `production` environment, and that environment only to `main`.
 
 ### 5. First deployment
-Merge to `main` (or open **Actions › Deploy › Run workflow** on `main`). When it finishes, the run links to https://app.pagework.dev.
+Open **Actions › Deploy › Run workflow** on `main` (it also runs by itself after CI passes on `main`). It creates the project and publishes the app; it's then reachable at `https://pagework-app.pages.dev`. Add the custom domain (step 2), and https://app.pagework.dev serves it.
 
 ## Checking a deployment
 - Open https://app.pagework.dev, write a line, reload: the app offers to restore it.

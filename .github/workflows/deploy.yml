@@ -44,6 +44,16 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      - name: Create the Pages project if it doesn't exist yet
+        run: |
+          if npx --yes wrangler@4.162.0 pages project list | grep -qw "pagework-app"; then
+            echo "The Pages project pagework-app exists."
+          else
+            npx --yes wrangler@4.162.0 pages project create pagework-app --production-branch=main
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Publish to Cloudflare Pages
         # Wrangler is Cloudflare's command-line tool, pinned and run with npx
         # so it isn't a project dependency.
