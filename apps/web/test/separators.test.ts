@@ -13,6 +13,10 @@ import {
   random,
 } from "../../../packages/fountain/test/generate.ts";
 
+// Fuzzing and exhaustive edits: seconds on a slow CI machine, more than
+// vitest's default 5 s limit. The time limit changes nothing they check.
+const SLOW_TEST_MS = 60_000;
+
 // The hidden empty lines between paragraphs are updated only around each
 // edit, for speed. They must always equal a rebuild over the whole script.
 
@@ -33,40 +37,44 @@ function run(state: EditorState, command: StateCommand): EditorState {
 }
 
 describe("separators", () => {
-  it("stay equal to a full rebuild through typing, Enter, Tab and deletions", () => {
-    const next = random(606);
-    let s = EditorState.create({
-      doc: generateScript(4, 2),
-      extensions: [
-        history(),
-        scriptField,
-        intents(),
-        elementEditing.of(true),
-        separatorField,
-      ],
-    });
-    for (let i = 0; i < 400; i++) {
-      const at = Math.floor(next() * (s.doc.length + 1));
-      s = s.update({ selection: { anchor: at } }).state;
-      const roll = next();
-      if (roll < 0.3)
-        s = s.update(typeSpec(s, pick(next, ["a", " ", "TOM", "."]))).state;
-      else if (roll < 0.5) s = run(s, enter);
-      else if (roll < 0.6) s = run(s, tab);
-      else if (roll < 0.7)
-        s = run(
-          s,
-          setElement(pick(next, ["action", "character", "scene_heading"])),
+  it(
+    "stay equal to a full rebuild through typing, Enter, Tab and deletions",
+    () => {
+      const next = random(606);
+      let s = EditorState.create({
+        doc: generateScript(4, 2),
+        extensions: [
+          history(),
+          scriptField,
+          intents(),
+          elementEditing.of(true),
+          separatorField,
+        ],
+      });
+      for (let i = 0; i < 400; i++) {
+        const at = Math.floor(next() * (s.doc.length + 1));
+        s = s.update({ selection: { anchor: at } }).state;
+        const roll = next();
+        if (roll < 0.3)
+          s = s.update(typeSpec(s, pick(next, ["a", " ", "TOM", "."]))).state;
+        else if (roll < 0.5) s = run(s, enter);
+        else if (roll < 0.6) s = run(s, tab);
+        else if (roll < 0.7)
+          s = run(
+            s,
+            setElement(pick(next, ["action", "character", "scene_heading"])),
+          );
+        else {
+          const to = Math.min(s.doc.length, at + Math.floor(next() * 4));
+          s = s.update({
+            changes: { from: at, to, insert: pick(next, ["", "\n", "\n\n"]) },
+          }).state;
+        }
+        expect(ranges(s.field(separatorField)), `step ${String(i)}`).toEqual(
+          ranges(separators(s)),
         );
-      else {
-        const to = Math.min(s.doc.length, at + Math.floor(next() * 4));
-        s = s.update({
-          changes: { from: at, to, insert: pick(next, ["", "\n", "\n\n"]) },
-        }).state;
       }
-      expect(ranges(s.field(separatorField)), `step ${String(i)}`).toEqual(
-        ranges(separators(s)),
-      );
-    }
-  });
+    },
+    SLOW_TEST_MS,
+  );
 });

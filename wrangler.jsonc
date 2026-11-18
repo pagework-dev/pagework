@@ -1,0 +1,19 @@
+// Cloudflare Worker that serves the web app at app.pagework.dev
+// (docs/DEPLOYMENT.md). The app is static files: there is no Worker script,
+// only assets. Cloudflare's Workers Builds runs `npx wrangler deploy` on
+// pushes to main, which builds the app first (build.command) and uploads
+// apps/web/dist. apps/web/dist/_headers sets the security headers.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pagework-app",
+  "compatibility_date": "2026-11-01",
+  // No usage statistics from the deploy tool either (CLAUDE.md).
+  "send_metrics": false,
+  "build": {
+    "command": "pnpm build",
+  },
+  "assets": {
+    "directory": "./apps/web/dist",
+    "not_found_handling": "single-page-application",
+  },
+}

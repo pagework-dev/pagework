@@ -117,6 +117,9 @@ export async function startDocument(): Promise<void> {
     return;
   }
   writer = draftWriter(store, onDraftWritten);
+  // Anything typed while storage was opening went to the stand-in store in
+  // memory; write it to IndexedDB now, or a closed tab would lose it.
+  if (changed) writer.schedule(draftNow);
   const offer = draftToOffer(await store.all().catch(() => []), draftId);
   if (offer !== null) doc.offer = offer;
   const flush = (): void => {

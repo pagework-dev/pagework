@@ -29,6 +29,10 @@ import { lineKind } from "../src/editor/lines.ts";
 import { scriptField } from "../src/editor/script.ts";
 import { random, pick } from "../../../packages/fountain/test/generate.ts";
 
+// Fuzzing and exhaustive edits: seconds on a slow CI machine, more than
+// vitest's default 5 s limit. The time limit changes nothing they check.
+const SLOW_TEST_MS = 60_000;
+
 // ARCHITECTURE.md: "the element type the writer chose is the type the parser
 // reads back, for every element, after any edit, paste, undo or import."
 // These tests drive the editor's real commands on an EditorState and compare
@@ -183,117 +187,126 @@ const FIRST = Array.from(
 const REST = [...FIRST, ...Array.from("0123456789 .,'-!?:;*_>@=#&")];
 
 describe("the core rule under random writing", () => {
-  it("reads back every element as chosen after every keystroke, command and undo", () => {
-    const next = random(1117);
-    let steps = 0;
-    for (let session = 0; session < 80; session++) {
-      let s = create();
-      const model: Entry[] = [{ element: "scene_heading", empty: true }];
-      let cursor = 0;
-      let previous: { doc: string; chosen: ScriptElement[] } | null = null;
-      const chosen = (): ScriptElement[] =>
-        model.filter((e) => !e.empty).map((e) => e.element);
+  it(
+    "reads back every element as chosen after every keystroke, command and undo",
+    () => {
+      const next = random(1117);
+      let steps = 0;
+      for (let session = 0; session < 80; session++) {
+        let s = create();
+        const model: Entry[] = [{ element: "scene_heading", empty: true }];
+        let cursor = 0;
+        let previous: { doc: string; chosen: ScriptElement[] } | null = null;
+        const chosen = (): ScriptElement[] =>
+          model.filter((e) => !e.empty).map((e) => e.element);
 
-      for (let step = 0; step < 40; step++) {
-        const current = model[cursor];
-        if (current === undefined) throw new Error("cursor outside the model");
-        const before = { doc: s.doc.toString(), chosen: chosen() };
-        const roll = next();
-        let label: string;
-        if (roll < 0.45) {
-          const text =
-            // A heading can't start with a symbol in Fountain, so a new
-            // element's first character is a letter, as it nearly always is.
-            (current.empty || current.bare === true ? pick(next, FIRST) : "") +
-            Array.from({ length: Math.floor(next() * 6) }, () =>
-              pick(next, REST),
-            ).join("");
-          if (text === "") continue;
-          label = `type ${JSON.stringify(text)}`;
-          s = type(s, text);
-          current.empty = false;
-          current.bare = false;
-        } else if (roll < 0.7) {
-          label = "enter";
-          s = run(s, enter);
-          if (current.empty || current.bare === true) {
-            current.element = enterOnEmpty(current.element);
-            current.empty = true;
-            current.bare = false;
-          } else {
-            model.splice(cursor + 1, 0, {
-              element: enterNext(current.element),
-              empty: true,
-            });
-            cursor++;
-          }
-        } else if (roll < 0.95) {
-          const forward = next() < 0.5;
-          const byTab = next() < 0.5;
-          const target = byTab
-            ? forward
-              ? tabNext(current.element)
-              : tabPrevious(current.element)
-            : pick(next, SHORTCUT_ELEMENTS);
-          label = byTab ? (forward ? "tab" : "shift+tab") : `set ${target}`;
-          const above = model
-            .slice(0, cursor)
-            .filter((e) => !e.empty)
-            .at(-1)?.element;
-          const below = model.slice(cursor + 1).find((e) => !e.empty)?.element;
-          const speech = target === "dialogue" || target === "parenthetical";
-          const inSpeech =
-            above === "character" ||
-            (above !== undefined && isSpeechPart(above));
-          // Choices Fountain can't express (dialogue with no cue above, or a
-          // cue removed from above its speech) are covered by the scenario
-          // tests; here the writer only makes the others.
-          if (speech && !inSpeech) continue;
-          if (
-            below !== undefined &&
-            isSpeechPart(below) &&
-            target !== "character" &&
-            !speech
-          )
-            continue;
-          if (target === current.element) continue;
-          const command = !byTab
-            ? setElement(target)
-            : forward
-              ? tab
-              : shiftTab;
-          s = run(s, command);
-          if (current.bare === true) current.empty = true;
-          current.bare = false;
-          if (target === "parenthetical" && current.empty) {
+        for (let step = 0; step < 40; step++) {
+          const current = model[cursor];
+          if (current === undefined)
+            throw new Error("cursor outside the model");
+          const before = { doc: s.doc.toString(), chosen: chosen() };
+          const roll = next();
+          let label: string;
+          if (roll < 0.45) {
+            const text =
+              // A heading can't start with a symbol in Fountain, so a new
+              // element's first character is a letter, as it nearly always is.
+              (current.empty || current.bare === true
+                ? pick(next, FIRST)
+                : "") +
+              Array.from({ length: Math.floor(next() * 6) }, () =>
+                pick(next, REST),
+              ).join("");
+            if (text === "") continue;
+            label = `type ${JSON.stringify(text)}`;
+            s = type(s, text);
             current.empty = false;
-            current.bare = true;
+            current.bare = false;
+          } else if (roll < 0.7) {
+            label = "enter";
+            s = run(s, enter);
+            if (current.empty || current.bare === true) {
+              current.element = enterOnEmpty(current.element);
+              current.empty = true;
+              current.bare = false;
+            } else {
+              model.splice(cursor + 1, 0, {
+                element: enterNext(current.element),
+                empty: true,
+              });
+              cursor++;
+            }
+          } else if (roll < 0.95) {
+            const forward = next() < 0.5;
+            const byTab = next() < 0.5;
+            const target = byTab
+              ? forward
+                ? tabNext(current.element)
+                : tabPrevious(current.element)
+              : pick(next, SHORTCUT_ELEMENTS);
+            label = byTab ? (forward ? "tab" : "shift+tab") : `set ${target}`;
+            const above = model
+              .slice(0, cursor)
+              .filter((e) => !e.empty)
+              .at(-1)?.element;
+            const below = model
+              .slice(cursor + 1)
+              .find((e) => !e.empty)?.element;
+            const speech = target === "dialogue" || target === "parenthetical";
+            const inSpeech =
+              above === "character" ||
+              (above !== undefined && isSpeechPart(above));
+            // Choices Fountain can't express (dialogue with no cue above, or a
+            // cue removed from above its speech) are covered by the scenario
+            // tests; here the writer only makes the others.
+            if (speech && !inSpeech) continue;
+            if (
+              below !== undefined &&
+              isSpeechPart(below) &&
+              target !== "character" &&
+              !speech
+            )
+              continue;
+            if (target === current.element) continue;
+            const command = !byTab
+              ? setElement(target)
+              : forward
+                ? tab
+                : shiftTab;
+            s = run(s, command);
+            if (current.bare === true) current.empty = true;
+            current.bare = false;
+            if (target === "parenthetical" && current.empty) {
+              current.empty = false;
+              current.bare = true;
+            }
+            current.element = target;
+          } else if (previous !== null) {
+            // Undo takes back exactly the last step; redo puts it back.
+            s = run(s, undo);
+            expect(s.doc.toString(), "undo").toBe(previous.doc);
+            expect(readBack(s), "undo").toEqual(previous.chosen);
+            s = run(s, redo);
+            expect(s.doc.toString(), "redo").toBe(before.doc);
+            expect(readBack(s), "redo").toEqual(before.chosen);
+            break;
+          } else {
+            continue;
           }
-          current.element = target;
-        } else if (previous !== null) {
-          // Undo takes back exactly the last step; redo puts it back.
-          s = run(s, undo);
-          expect(s.doc.toString(), "undo").toBe(previous.doc);
-          expect(readBack(s), "undo").toEqual(previous.chosen);
-          s = run(s, redo);
-          expect(s.doc.toString(), "redo").toBe(before.doc);
-          expect(readBack(s), "redo").toEqual(before.chosen);
-          break;
-        } else {
-          continue;
+          // Choosing an element for an empty line changes no text, so it
+          // isn't an undo step.
+          if (s.doc.toString() !== before.doc) previous = before;
+          s = s.update({ annotations: isolateHistory.of("full") }).state;
+          steps++;
+          const where = `session ${String(session)} step ${String(step)}: ${label}\n${JSON.stringify(s.doc.toString())}`;
+          expect(readBack(s), where).toEqual(chosen());
+          expect(cursorElement(s), where).toBe(model[cursor]?.element);
         }
-        // Choosing an element for an empty line changes no text, so it
-        // isn't an undo step.
-        if (s.doc.toString() !== before.doc) previous = before;
-        s = s.update({ annotations: isolateHistory.of("full") }).state;
-        steps++;
-        const where = `session ${String(session)} step ${String(step)}: ${label}\n${JSON.stringify(s.doc.toString())}`;
-        expect(readBack(s), where).toEqual(chosen());
-        expect(cursorElement(s), where).toBe(model[cursor]?.element);
       }
-    }
-    expect(steps).toBeGreaterThan(1000);
-  });
+      expect(steps).toBeGreaterThan(1000);
+    },
+    SLOW_TEST_MS,
+  );
 });
 
 describe("paste", () => {

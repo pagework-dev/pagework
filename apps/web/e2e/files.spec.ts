@@ -111,6 +111,38 @@ test("keeps unsaved work when the tab closes and offers it back", async ({
   await expect(page.locator(".cm-content")).toContainText("The lamp turns.");
 });
 
+test("keeps what was typed before the browser's storage was ready", async ({
+  page,
+}) => {
+  // Hold back IndexedDB's "open succeeded" for 1.5 s, as a slow device might,
+  // and type in the meantime.
+  await page.addInitScript(() => {
+    const open = indexedDB.open.bind(indexedDB);
+    indexedDB.open = (name: string, version?: number) => {
+      const request = open(name, version);
+      Object.defineProperty(request, "onsuccess", {
+        set(handler: (event: Event) => void) {
+          request.addEventListener("success", (event) => {
+            setTimeout(() => {
+              handler(event);
+            }, 1500);
+          });
+        },
+      });
+      return request;
+    };
+  });
+  await page.reload();
+  await page.keyboard.type("int. lighthouse - night");
+  await page.waitForTimeout(2500);
+  await page.reload();
+  await expect(page.getByRole("region", { name: "Unsaved work" })).toBeVisible({
+    timeout: 8000,
+  });
+  await page.getByRole("button", { name: "Restore script" }).click();
+  await expect(page.locator(".cm-content")).toContainText("lighthouse");
+});
+
 test("asks before replacing unsaved changes with a new script", async ({
   page,
 }) => {
