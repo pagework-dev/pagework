@@ -6,7 +6,8 @@
   "license": "AGPL-3.0-only",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./fonts/*": "./fonts/*"
   },
   "scripts": {
     "typecheck": "tsc --project ."
@@ -14,6 +15,7 @@
   "dependencies": {
     "@pagework/fountain": "workspace:*",
     "@pagework/layout": "workspace:*",
+    "@pdf-lib/fontkit": "1.1.1",
     "pdf-lib": "1.17.1"
   }
 }

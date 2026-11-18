@@ -8,6 +8,8 @@
     "node": ">=26"
   },
   "scripts": {
+    "dev": "pnpm --filter @pagework/web dev",
+    "build": "pnpm --filter @pagework/web build",
     "typecheck": "tsc --project . && pnpm --recursive typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -16,13 +18,16 @@
     "test:watch": "vitest",
     "parse": "node apps/cli/src/main.ts parse",
     "templates:test": "vitest run --project @pagework/templates",
-    "pagework": "node apps/cli/src/main.ts"
+    "pagework": "node apps/cli/src/main.ts",
+    "e2e": "pnpm --filter @pagework/web e2e",
+    "perf": "pnpm --filter @pagework/web perf"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "eslint": "10.14.0",
     "eslint-config-prettier": "10.1.8",
     "prettier": "3.9.10",
+    "prettier-plugin-svelte": "4.1.1",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.2",
     "vite": "8.3.7",

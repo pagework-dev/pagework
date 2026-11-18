@@ -46,6 +46,7 @@ Being upfront about that is deliberate. It also sets the bar: every change is re
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | How the pieces fit: packages, data model, sync, deployment modes |
 | [docs/DESIGN.md](docs/DESIGN.md) | Interface design decisions and the reasons behind them |
 | [docs/TEMPLATES.md](docs/TEMPLATES.md) | The script template format, and how to write a new template |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | How the web app is deployed to app.pagework.dev |
 | [docs/adr/](docs/adr/) | Architecture decision records |
 | [ROADMAP.md](ROADMAP.md) | What is planned, in order |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute, including the sign-off requirement |

@@ -1,0 +1,9 @@
+{
+  // Solution file: the browser code and the build/test tooling are checked
+  // separately, so Node's types never reach code that runs in the browser.
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}

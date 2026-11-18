@@ -5,4 +5,3 @@ export {
   type PdfOptions,
   type PdfResult,
 } from "./render.ts";
-export { encodeWinAnsi } from "./winansi.ts";

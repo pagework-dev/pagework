@@ -6,7 +6,7 @@ import type {
   Template,
 } from "@pagework/templates";
 import { characterWidth } from "./fonts.ts";
-import type { LineRole } from "./model.ts";
+import type { LineRole, SourcePoint } from "./model.ts";
 import { spanLength, wrapSpans } from "./wrap.ts";
 
 /** A printed line before it has a page and a vertical position. */
@@ -14,6 +14,8 @@ export interface Row {
   x: number;
   spans: Span[];
   role: LineRole;
+  source?: SourcePoint;
+  marker?: string;
 }
 
 /** Several lines printed side by side on one line (dual dialogue, scene numbers). */
@@ -72,22 +74,60 @@ function styleOf(g: Geometry, name: ElementName): ElementStyle {
   return style;
 }
 
-/** Applies an element's case, wrapping text, prefix, suffix and emphasis. */
-function styleSpans(style: ElementStyle, content: readonly Span[]): Span[] {
+/**
+ * Applies an element's case, wrapping text, prefix, suffix and emphasis.
+ * `lead` counts the characters added before the content.
+ */
+function styleSpans(
+  style: ElementStyle,
+  content: readonly Span[],
+): { spans: Span[]; lead: number } {
   let spans = content.map((s) => ({ ...s }));
+  let lead = 0;
   if (style.case === "upper")
     spans = spans.map((s) => ({ ...s, text: s.text.toUpperCase() }));
   const text = spans.map((s) => s.text).join("");
-  if (style.wrap === "parentheses" && !text.startsWith("("))
+  if (style.wrap === "parentheses" && !text.startsWith("(")) {
     spans = [{ text: "(" }, ...spans, { text: ")" }];
-  if (style.wrap === "brackets" && !text.startsWith("["))
+    lead++;
+  }
+  if (style.wrap === "brackets" && !text.startsWith("[")) {
     spans = [{ text: "[" }, ...spans, { text: "]" }];
-  if (style.prefix !== "") spans.unshift({ text: style.prefix });
+    lead++;
+  }
+  if (style.prefix !== "") {
+    spans.unshift({ text: style.prefix });
+    lead += style.prefix.length;
+  }
   if (style.suffix !== "") spans.push({ text: style.suffix });
   for (const flag of style.style) {
     for (const span of spans) span[flag] = true;
   }
-  return spans;
+  return { spans, lead };
+}
+
+/**
+ * The source point of a printed line that starts `offset` characters into an
+ * element's content. Content joins the element's source lines with "\n".
+ */
+function sourceAt(
+  content: readonly Span[],
+  firstLine: number,
+  offset: number,
+): SourcePoint {
+  const text = content.map((s) => s.text).join("");
+  const at = Math.max(0, Math.min(offset, text.length));
+  let line = firstLine;
+  let lineStart = 0;
+  for (
+    let i = text.indexOf("\n");
+    i !== -1 && i < at;
+    i = text.indexOf("\n", i + 1)
+  ) {
+    line++;
+    lineStart = i + 1;
+  }
+  return { line, column: at - lineStart };
 }
 
 /** Lays out one element's text in a box, one row group per printed line. */
@@ -97,11 +137,13 @@ function boxRows(
   box: { left: number; width: number },
   content: readonly Span[],
   role: LineRole,
+  firstLine: number | null,
 ): RowGroup[] {
   const left = box.left + style.indent;
   const width = style.width ?? box.width - style.indent;
   const max = Math.floor(width / g.charWidth + 1e-9);
-  return wrapSpans(styleSpans(style, content), max).map((spans) => {
+  const styled = styleSpans(style, content);
+  return wrapSpans(styled.spans, max).map(({ spans, start }) => {
     const used = spanLength(spans) * g.charWidth;
     const x =
       style.align === "right"
@@ -109,22 +151,26 @@ function boxRows(
         : style.align === "center"
           ? left + (width - used) / 2
           : left;
-    return [{ x, spans, role }];
+    const row: Row = { x, spans, role };
+    if (firstLine !== null)
+      row.source = sourceAt(content, firstLine, start - styled.lead);
+    return [row];
   });
 }
 
 function elementRows(
   g: Geometry,
   name: ElementName,
-  content: readonly Span[],
+  element: Element & { content: Span[] },
   role: LineRole,
 ): RowGroup[] {
   return boxRows(
     g,
     styleOf(g, name),
     { left: g.textLeft, width: g.textWidth },
-    content,
+    element.content,
     role,
+    element.lines[0],
   );
 }
 
@@ -150,7 +196,14 @@ function speechBody(
 ): RowGroup[] {
   return parts.flatMap((part) => {
     const { left, width, style } = box(part.type);
-    return boxRows(g, style, { left, width }, part.content, part.type);
+    return boxRows(
+      g,
+      style,
+      { left, width },
+      part.content,
+      part.type,
+      part.lines[0],
+    );
   });
 }
 
@@ -184,15 +237,23 @@ function speech(
       },
       cueMarker,
     );
-    return (
+    const group =
       boxRows(
         g,
         nameStyle,
         { left: g.textLeft, width: g.textWidth },
         spans,
         "character",
-      )[0] ?? []
-    );
+        null,
+      )[0] ?? [];
+    return group.map((row) => {
+      const out: Row = {
+        ...row,
+        source: { line: character.lines[0], column: 0 },
+      };
+      if (cueMarker !== null) out.marker = cueMarker;
+      return out;
+    });
   };
   return {
     name: character.name.toUpperCase(),
@@ -206,6 +267,7 @@ function speech(
         { left: g.textLeft, width: g.textWidth },
         [{ text: t.pagination.dialogue.more }],
         "more",
+        null,
       )[0] ?? [],
   };
 }
@@ -248,6 +310,7 @@ function columnRows(
       null,
     ),
     "character",
+    character.lines[0],
   );
   const body = speechBody(g, parts, (name) =>
     column(
@@ -354,12 +417,7 @@ export function buildBlocks(
       case "scene_heading": {
         sceneCount++;
         lastSpeaker = null;
-        const rows = elementRows(
-          g,
-          "scene_heading",
-          el.content,
-          "scene_heading",
-        );
+        const rows = elementRows(g, "scene_heading", el, "scene_heading");
         if (t.pagination.sceneNumbers !== "none") {
           rows[0]?.push(
             ...sceneNumberRows(g, el.sceneNumber ?? String(sceneCount)),
@@ -404,7 +462,7 @@ export function buildBlocks(
           splittable: true,
           isSceneHeading: false,
           spaceBefore: styleOf(g, el.type).spaceBefore,
-          rows: elementRows(g, el.type, el.content, el.type),
+          rows: elementRows(g, el.type, el, el.type),
         });
         break;
       }
@@ -416,7 +474,7 @@ export function buildBlocks(
           splittable: false,
           isSceneHeading: false,
           spaceBefore: styleOf(g, el.type).spaceBefore,
-          rows: elementRows(g, el.type, el.content, el.type),
+          rows: elementRows(g, el.type, el, el.type),
         });
         break;
       case "character": {

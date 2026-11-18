@@ -1,0 +1,38 @@
+/*
+ * Courier Prime (SIL Open Font Licence, packages/pdf/fonts/OFL.txt), served
+ * from the app itself: no font CDN (CLAUDE.md). The same files are embedded in
+ * exported PDFs, so the page on screen and the page on paper share metrics.
+ * Used on the script page only (docs/DESIGN.md, Type).
+ */
+@font-face {
+  font-family: "Courier Prime";
+  src: url("../../../../packages/pdf/fonts/CourierPrime-Regular.ttf")
+    format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Courier Prime";
+  src: url("../../../../packages/pdf/fonts/CourierPrime-Bold.ttf")
+    format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Courier Prime";
+  src: url("../../../../packages/pdf/fonts/CourierPrime-Italic.ttf")
+    format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: block;
+}
+@font-face {
+  font-family: "Courier Prime";
+  src: url("../../../../packages/pdf/fonts/CourierPrime-BoldItalic.ttf")
+    format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: block;
+}

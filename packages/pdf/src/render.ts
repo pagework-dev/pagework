@@ -1,8 +1,8 @@
 import type { Span } from "@pagework/fountain";
 import type { PageModel } from "@pagework/layout";
+import fontkit from "@pdf-lib/fontkit";
 import {
   PDFDocument,
-  PDFHexString,
   PDFName,
   beginText,
   endText,
@@ -13,10 +13,9 @@ import {
   rectangle,
   setFontAndSize,
   showText,
-  type PDFRef,
+  type PDFFont,
 } from "pdf-lib";
 import { readFont, type FontInfo } from "./ttf.ts";
-import { encodeWinAnsi, WIN_ANSI_TO_UNICODE } from "./winansi.ts";
 
 /** The four Courier Prime font files, as bytes. */
 export interface CourierPrime {
@@ -42,7 +41,7 @@ export interface PdfOptions {
 
 export interface PdfResult {
   bytes: Uint8Array;
-  /** Characters the PDF couldn't show, printed as "?". Each listed once. */
+  /** Characters Courier Prime doesn't have, printed as "?". Each listed once. */
   unencodable: string[];
 }
 
@@ -63,70 +62,19 @@ const RESOURCE_NAMES: Record<Style, string> = {
 };
 
 /**
- * Embeds a whole TrueType font as a simple font with WinAnsi encoding. This
- * avoids a font-subsetting dependency; the cost is Latin-1 coverage only and
- * the full font file (about 70 KB) in every PDF that uses the style.
+ * Subset fonts are named with a six-letter tag (PDF 32000-1 §9.6.4).
+ * pdf-lib would pick a random one; fixed tags keep the output repeatable.
  */
-function embedFont(
-  doc: PDFDocument,
-  bytes: Uint8Array,
-  info: FontInfo,
-): PDFRef {
-  const { context } = doc;
-  const scale = (units: number): number =>
-    Math.round((units * 1000) / info.unitsPerEm);
-  const fontFile = context.register(
-    context.flateStream(bytes, { Length1: bytes.length }),
-  );
-  const italic = info.italicAngle !== 0;
-  // PDF 32000-1 §9.8.2: 1 = fixed pitch, 32 = non-symbolic, 64 = italic.
-  const flags = (info.isFixedPitch ? 1 : 0) | 32 | (italic ? 64 : 0);
-  const descriptor = context.register(
-    context.obj({
-      Type: "FontDescriptor",
-      FontName: info.postScriptName,
-      Flags: flags,
-      FontBBox: info.bbox.map(scale),
-      ItalicAngle: info.italicAngle,
-      Ascent: scale(info.ascender),
-      Descent: scale(info.descender),
-      CapHeight: scale(info.capHeight),
-      // StemV isn't in the font file; these are the usual estimates for
-      // regular and bold weights, and viewers only use it for substitution.
-      StemV: info.weightClass >= 600 ? 120 : 80,
-      FontFile2: fontFile,
-    }),
-  );
-  const widths: number[] = [];
-  for (let code = 32; code <= 255; code++) {
-    const unicode = WIN_ANSI_TO_UNICODE.get(code);
-    widths.push(
-      scale((unicode === undefined ? null : info.advanceOf(unicode)) ?? 0),
-    );
-  }
-  return context.register(
-    context.obj({
-      Type: "Font",
-      Subtype: "TrueType",
-      BaseFont: info.postScriptName,
-      FirstChar: 32,
-      LastChar: 255,
-      Widths: widths,
-      Encoding: "WinAnsiEncoding",
-      FontDescriptor: descriptor,
-    }),
-  );
-}
+const SUBSET_TAGS: Record<Style, string> = {
+  regular: "PWREGU",
+  bold: "PWBOLD",
+  italic: "PWITAL",
+  boldItalic: "PWBOIT",
+};
 
 /** Coordinates to 1/10 000 pt: far below what any printer resolves. */
 function round(value: number): number {
   return Math.round(value * 10000) / 10000;
-}
-
-function hex(bytes: number[]): string {
-  return bytes
-    .map((b) => b.toString(16).padStart(2, "0").toUpperCase())
-    .join("");
 }
 
 /** Renders a page model to PDF. Runs in Node and the browser. */
@@ -145,20 +93,46 @@ export async function renderPdf(
   doc.setCreator("Pagework");
   if (options.title !== undefined) doc.setTitle(options.title);
 
+  doc.registerFontkit(fontkit);
   const info = new Map<Style, FontInfo>();
-  const refs = new Map<Style, PDFRef>();
-  const fontFor = (style: Style): { ref: PDFRef; info: FontInfo } => {
+  const embedded = new Map<Style, PDFFont>();
+  // Only the glyphs a script uses are embedded (fontkit subsetting), so any
+  // character Courier Prime has can print, not just Windows-1252.
+  const fontFor = async (
+    style: Style,
+  ): Promise<{ font: PDFFont; info: FontInfo }> => {
     let fontInfo = info.get(style);
     if (fontInfo === undefined) {
       fontInfo = readFont(options.fonts[style]);
       info.set(style, fontInfo);
     }
-    let ref = refs.get(style);
-    if (ref === undefined) {
-      ref = embedFont(doc, options.fonts[style], fontInfo);
-      refs.set(style, ref);
+    let font = embedded.get(style);
+    if (font === undefined) {
+      font = await doc.embedFont(options.fonts[style], {
+        subset: true,
+        customName: `${SUBSET_TAGS[style]}+${fontInfo.postScriptName}`,
+      });
+      embedded.set(style, font);
     }
-    return { ref, info: fontInfo };
+    return { font, info: fontInfo };
+  };
+  const characters = new Map<Style, Set<number>>();
+  const printable = async (style: Style, text: string): Promise<string> => {
+    let set = characters.get(style);
+    if (set === undefined) {
+      set = new Set((await fontFor(style)).font.getCharacterSet());
+      characters.set(style, set);
+    }
+    let out = "";
+    for (const ch of text) {
+      if (set.has(ch.codePointAt(0) ?? 0)) {
+        out += ch;
+      } else {
+        unencodable.add(ch);
+        out += "?";
+      }
+    }
+    return out;
   };
 
   const regular = readFont(options.fonts.regular);
@@ -180,18 +154,17 @@ export async function renderPdf(
       for (const span of line.spans) {
         if (span.text === "") continue;
         const style = styleOf(span);
-        const font = fontFor(style);
+        const font = await fontFor(style);
         used.add(style);
-        const encoded = encodeWinAnsi(span.text);
-        for (const ch of encoded.unencodable) unencodable.add(ch);
+        const text = await printable(style, span.text);
         page.pushOperators(
           beginText(),
           setFontAndSize(RESOURCE_NAMES[style], size),
           moveText(round(x), round(baseline)),
-          showText(PDFHexString.of(hex(encoded.bytes))),
+          showText(font.font.encodeText(text)),
           endText(),
         );
-        const width = encoded.bytes.length * advance * size;
+        const width = Array.from(text).length * advance * size;
         if (span.underline === true) {
           const position =
             (font.info.underlinePosition / font.info.unitsPerEm) * size;
@@ -215,7 +188,7 @@ export async function renderPdf(
     for (const style of used) {
       page.node.setFontDictionary(
         PDFName.of(RESOURCE_NAMES[style]),
-        fontFor(style).ref,
+        (await fontFor(style)).font.ref,
       );
     }
   }

@@ -1,0 +1,32 @@
+{
+  "name": "@pagework/web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The browser app: script editor with page view.",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.app.json --fail-on-warnings && tsc --project tsconfig.node.json",
+    "e2e": "playwright test --project desktop --project tablet --project phone",
+    "perf": "vite build && node build/bundle-size.ts && PW_PERF=1 playwright test --project perf"
+  },
+  "dependencies": {
+    "@codemirror/commands": "6.11.1",
+    "@codemirror/state": "6.7.6",
+    "@codemirror/view": "6.43.15",
+    "@pagework/fountain": "workspace:*",
+    "@pagework/layout": "workspace:*",
+    "@pagework/pdf": "workspace:*",
+    "@pagework/templates": "workspace:*",
+    "svelte": "5.57.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "@types/node": "26.6.6",
+    "svelte-check": "4.7.8"
+  }
+}
