@@ -9,6 +9,10 @@ import {
 } from "../src/index.ts";
 import { generateScript, pick, random } from "./generate.ts";
 
+// Fuzzing and exhaustive edits: seconds on a slow CI machine, more than
+// vitest's default 5 s limit. The time limit changes nothing they check.
+const SLOW_TEST_MS = 60_000;
+
 // The rule these tests enforce: after any edit, the incremental result is
 // exactly what a full parse of the new text gives. They never compare the
 // incremental parser with itself.
@@ -188,27 +192,31 @@ describe("updateScript", () => {
     expect(script.reparsed).toBeNull();
   });
 
-  it("matches a full parse after every single edit to each fixture", () => {
-    const edits = ["x", "\n", "\n\n", "^", "@", ".", "(", "  ", ""];
-    for (const [path, raw] of Object.entries(fixtures)) {
-      const base = parseScript(raw);
-      const starts = [0];
-      for (let i = 0; i < base.source.length; i++)
-        if (base.source[i] === "\n") starts.push(i + 1, i);
-      for (const at of starts) {
-        for (const insert of edits) {
-          const edit =
-            insert === ""
-              ? { from: at, to: Math.min(base.source.length, at + 1), insert }
-              : { from: at, to: at, insert };
-          const next = updateScript(base, edit);
-          expect(next.elements, `${path} ${JSON.stringify(edit)}`).toEqual(
-            parse(next.source),
-          );
+  it(
+    "matches a full parse after every single edit to each fixture",
+    () => {
+      const edits = ["x", "\n", "\n\n", "^", "@", ".", "(", "  ", ""];
+      for (const [path, raw] of Object.entries(fixtures)) {
+        const base = parseScript(raw);
+        const starts = [0];
+        for (let i = 0; i < base.source.length; i++)
+          if (base.source[i] === "\n") starts.push(i + 1, i);
+        for (const at of starts) {
+          for (const insert of edits) {
+            const edit =
+              insert === ""
+                ? { from: at, to: Math.min(base.source.length, at + 1), insert }
+                : { from: at, to: at, insert };
+            const next = updateScript(base, edit);
+            expect(next.elements, `${path} ${JSON.stringify(edit)}`).toEqual(
+              parse(next.source),
+            );
+          }
         }
       }
-    }
-  });
+    },
+    SLOW_TEST_MS,
+  );
 
   it.each([
     { name: "with boneyard", boneyard: true, minimumWindowed: 0.2 },
@@ -248,6 +256,7 @@ describe("updateScript", () => {
       // The incremental path must actually run, or this proves nothing.
       expect(windowed / steps).toBeGreaterThan(minimumWindowed);
     },
+    SLOW_TEST_MS,
   );
 
   it("gives back the original elements when an edit is undone", () => {
@@ -266,22 +275,26 @@ describe("updateScript", () => {
     }
   });
 
-  it("re-parses only the paragraphs around a keystroke in a long script", () => {
-    const script = parseScript(generateScript(120));
-    expect(script.lines.length).toBeGreaterThan(3000);
-    const next = random(11);
-    for (let i = 0; i < 100; i++) {
-      const line = 10 + Math.floor(next() * (script.lines.length - 20));
-      const at =
-        script.lines.slice(0, line).reduce((n, l) => n + l.length + 1, 0) +
-        Math.floor(next() * ((script.lines[line] ?? "").length + 1));
-      const updated = updateScript(script, { from: at, to: at, insert: "a" });
-      expect(updated.elements).toEqual(parse(updated.source));
-      const window = updated.reparsed;
-      expect(window).not.toBeNull();
-      if (window !== null) expect(window[1] - window[0]).toBeLessThan(80);
-    }
-  });
+  it(
+    "re-parses only the paragraphs around a keystroke in a long script",
+    () => {
+      const script = parseScript(generateScript(120));
+      expect(script.lines.length).toBeGreaterThan(3000);
+      const next = random(11);
+      for (let i = 0; i < 100; i++) {
+        const line = 10 + Math.floor(next() * (script.lines.length - 20));
+        const at =
+          script.lines.slice(0, line).reduce((n, l) => n + l.length + 1, 0) +
+          Math.floor(next() * ((script.lines[line] ?? "").length + 1));
+        const updated = updateScript(script, { from: at, to: at, insert: "a" });
+        expect(updated.elements).toEqual(parse(updated.source));
+        const window = updated.reparsed;
+        expect(window).not.toBeNull();
+        if (window !== null) expect(window[1] - window[0]).toBeLessThan(80);
+      }
+    },
+    SLOW_TEST_MS,
+  );
 
   it("keeps the element objects before the edit", () => {
     const script = parseScript(generateScript(10));
