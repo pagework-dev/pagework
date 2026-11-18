@@ -1,7 +1,7 @@
 // Cloudflare Worker that serves the web app at app.pagework.dev
 // (docs/DEPLOYMENT.md). The app is static files: there is no Worker script,
-// only assets. Cloudflare's Workers Builds runs `npx wrangler deploy` on
-// pushes to main, which builds the app first (build.command) and uploads
+// only assets. The Deploy workflow runs `wrangler deploy` after CI passes on
+// main, which builds the app first (build.command) and uploads
 // apps/web/dist. apps/web/dist/_headers sets the security headers.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
