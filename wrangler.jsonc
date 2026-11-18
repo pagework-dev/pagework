@@ -5,7 +5,7 @@
 // apps/web/dist. apps/web/dist/_headers sets the security headers.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "pagework",
+  "name": "pagework-app",
   "compatibility_date": "2026-11-01",
   // No usage statistics from the deploy tool either (CLAUDE.md).
   "send_metrics": false,
