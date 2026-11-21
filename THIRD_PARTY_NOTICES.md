@@ -31,8 +31,13 @@ Pagework includes or depends on the following third-party work. Each keeps its o
 | `@codemirror/commands` | 6.11.1 | MIT | `apps/web` |
 | `@marijn/find-cluster-break` (via @codemirror/state) | 1.0.4 | MIT | `apps/web` |
 | `crelt`, `style-mod`, `w3c-keyname` (via @codemirror/view) | 1.0.7, 4.1.4, 2.2.8 | MIT | `apps/web` |
+| `hono` | 4.13.17 | MIT | `apps/server` |
+| `@hono/node-server` | 2.1.8 | MIT | `apps/server` |
+| `kysely` | 0.28.20 | MIT | `apps/server` |
 | `@codemirror/language`, `@lezer/common`, `@lezer/highlight`, `@lezer/lr` (via @codemirror/commands) | 6.13.1, 1.5.5, 1.2.5, 1.4.12 | MIT | Installed with `@codemirror/commands`; not in the built app, which uses none of their code |
 
 The browser app (`apps/web`) is built into static files that include the packages above and the Courier Prime files. Templates reach the browser as JSON resolved at build time, so `yaml` and `@cfworker/json-schema` are not in the browser bundle.
+
+The server uses Node's built-in `node:sqlite` for SQLite, so it has no native add-ons.
 
 Development-only tools (TypeScript, ESLint, Prettier and `prettier-plugin-svelte`, Vite and `@sveltejs/vite-plugin-svelte`, Vitest, `svelte-check`, Playwright, `@types/node`) are not shipped and are listed in the `package.json` files.
