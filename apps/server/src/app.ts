@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import type { AppEnv, Deps } from "./context.ts";
 import { ApiError } from "./errors.ts";
+import { sameOrigin, sessions } from "./middleware.ts";
+import { authRoutes } from "./routes/auth.ts";
 import { healthRoutes } from "./routes/health.ts";
 
 /** The whole HTTP surface: the API under /api, the web app everywhere else. */
@@ -27,7 +29,10 @@ export function createApp(deps: Deps): Hono<AppEnv> {
     await next();
     c.res.headers.set("Cache-Control", "no-store");
   });
+  api.use(sameOrigin(deps));
+  api.use(sessions(deps));
   api.route("/", healthRoutes(deps));
+  api.route("/", authRoutes(deps));
   api.all("*", (c) => c.json({ error: "not_found" }, 404));
   app.route("/api", api);
 

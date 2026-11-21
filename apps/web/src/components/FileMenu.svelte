@@ -8,7 +8,9 @@
     printScript,
     save,
     saveAs,
+    signInInstead,
   } from "../lib/document.svelte.ts";
+  import { host } from "../lib/host.svelte.ts";
   import type { MenuItem } from "../lib/menu.ts";
   import Menu from "./Menu.svelte";
 
@@ -36,6 +38,10 @@
       run: printScript,
       disabled: doc.busy !== null,
     },
+    // Only when the app came from a Pagework server (not the standalone app).
+    ...(host.server === null
+      ? []
+      : [{ label: "file.signIn" as const, keys: null, run: signInInstead }]),
   ]);
 </script>
 

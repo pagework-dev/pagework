@@ -29,7 +29,7 @@ function builtWebApp(): string {
   mkdirSync(join(dir.path, "assets"));
   writeFileSync(
     join(dir.path, "index.html"),
-    "<!doctype html><title>app</title>",
+    "<!doctype html><head><title>app</title></head>",
   );
   writeFileSync(join(dir.path, "assets", "main-abc.js"), "console.log(1)");
   writeFileSync(join(dir.path, "_headers"), HEADERS);
@@ -82,6 +82,14 @@ describe("the web app", () => {
     // The API carries the same security headers.
     const api = await s.fetch("/api/health");
     expect(api.headers.get("x-frame-options")).toBe("DENY");
+  });
+
+  it("marks the page it serves, so the app knows a server is there", async () => {
+    const s = await server(builtWebApp());
+    for (const path of ["/", "/index.html", "/scripts/123"])
+      expect(await (await s.fetch(path)).text(), path).toContain(
+        '<meta name="pagework-server" content="1">',
+      );
   });
 
   it("caches hashed assets for a year", async () => {

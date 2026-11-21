@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { serve } from "@hono/node-server";
 import { createApp } from "./app.ts";
+import { openSetupGate } from "./auth/setup.ts";
 import { ConfigError, loadConfig } from "./config.ts";
 import { openStore } from "./db/index.ts";
 import { migrate } from "./db/migrate.ts";
@@ -40,7 +41,27 @@ async function main(): Promise<void> {
       folder: config.webDir,
     });
 
-  const app = createApp({ config, store, log, web, now: () => new Date() });
+  const setup = await openSetupGate(store.db, config.setupCode);
+  const code = setup.code();
+  if (code !== null && config.setupCode === undefined)
+    // Deliberately printed: only the person running the server sees the
+    // log, and the code is useless once the first account exists.
+    log.info(
+      `Pagework isn't set up yet. Open ${config.url.origin}/?setup=${code} to create the first account, or type the setup code ${code} there.`,
+    );
+  else if (code !== null)
+    log.info(
+      `Pagework isn't set up yet. Open ${config.url.origin} and use the setup code from PAGEWORK_SETUP_CODE.`,
+    );
+
+  const app = createApp({
+    config,
+    store,
+    log,
+    web,
+    setup,
+    now: () => new Date(),
+  });
   const server = serve(
     { fetch: app.fetch, hostname: config.host, port: config.port },
     (info) => {

@@ -8,6 +8,11 @@ export default defineConfig({
   // The browser tests run against the preview server, so they run under the
   // same security headers as the deployed app.
   preview: { headers: SECURITY_HEADERS },
+  // `PAGEWORK_API=http://localhost:3000 pnpm dev` works against a running
+  // server; without it, the dev app works without an account.
+  ...(process.env.PAGEWORK_API === undefined
+    ? {}
+    : { server: { proxy: { "/api": process.env.PAGEWORK_API } } }),
   build: {
     // Static files only; the app runs from any web server or file host.
     outDir: "dist",
