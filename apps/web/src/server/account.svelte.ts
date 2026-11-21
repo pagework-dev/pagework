@@ -1,5 +1,6 @@
 import type { Instance } from "../lib/host.svelte.ts";
 import { api, ApiFailure, useCsrfToken } from "./api.ts";
+import { router } from "./router.svelte.ts";
 
 /** The signed-in person, as GET /api/session describes them. */
 export interface SessionView {
@@ -95,6 +96,9 @@ export async function signOut(): Promise<void> {
     account.view = null;
     useCsrfToken("");
     account.phase = "signIn";
+    // The next person to sign in on this device starts at the script list.
+    history.replaceState(null, "", "/");
+    router.route = { screen: "scripts" };
   }
 }
 

@@ -4,6 +4,7 @@
   import { t } from "../i18n/index.ts";
   import type { MenuItem } from "../lib/menu.ts";
   import { account, signOut } from "./account.svelte.ts";
+  import { go, router } from "./router.svelte.ts";
 
   /** The chrome around every signed-in screen except the editor. */
   let { children, actions = [] }: { children: Snippet; actions?: MenuItem[] } =
@@ -18,6 +19,15 @@
 <div class="shell">
   <header class="bar" aria-label={t("toolbar.label")}>
     <span class="product">{t("product.name")}</span>
+    {#if router.route.screen !== "scripts"}
+      <button
+        type="button"
+        class="control quiet"
+        onclick={() => void go({ screen: "scripts" })}
+      >
+        {t("editor.scripts")}
+      </button>
+    {/if}
     <span class="spacer"></span>
     <span class="who" title={account.view?.user.email ?? ""}>
       {account.view?.user.displayName ?? ""}
