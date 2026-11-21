@@ -62,6 +62,19 @@ const TYPES: Record<string, string> = {
   ".webmanifest": "application/manifest+json",
 };
 
+/**
+ * Marks the page as served by a Pagework server, so the app knows to offer
+ * sign-in without asking first. A static host serves the page unmarked,
+ * and the app opens straight into local mode with no request at all.
+ */
+export const SERVER_MARK = '<meta name="pagework-server" content="1">';
+
+export function markServed(html: string): string {
+  return html.includes("</head>")
+    ? html.replace("</head>", `    ${SERVER_MARK}\n  </head>`)
+    : html;
+}
+
 export interface WebFile {
   status: 200 | 404;
   body: Uint8Array;
@@ -85,9 +98,13 @@ export function webApp(dir: string): WebApp {
   const securityHeaders = headersFor(rules, "/");
   const root = normalize(dir + sep);
 
+  const index = available
+    ? new TextEncoder().encode(markServed(readFileSync(indexPath, "utf8")))
+    : new Uint8Array();
+
   const read = (path: string, file: string): WebFile => ({
     status: 200,
-    body: readFileSync(file),
+    body: file === indexPath ? index : readFileSync(file),
     headers: {
       ...headersFor(rules, path),
       "Content-Type": TYPES[extname(file)] ?? "application/octet-stream",
