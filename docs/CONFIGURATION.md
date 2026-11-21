@@ -25,8 +25,28 @@ If a setting is missing or wrong, the server doesn't start. It prints every prob
 | `PAGEWORK_TRUST_PROXY` | `false` | Set to `true` when the server is behind a reverse proxy (Caddy, nginx, Traefik, Cloudflare Tunnel) that sets `X-Forwarded-For`. Rate limits then count the visitor's address instead of the proxy's. Don't turn it on without a proxy: anyone could then pretend to be any address. |
 | `PAGEWORK_INSECURE_HTTP` | `false` | Set to `true` to allow a `PAGEWORK_URL` starting with `http://` on an address other than localhost. Passwords and sessions then cross the network unencrypted, so only do this on a private network you trust. The server logs a warning at start-up. |
 | `PAGEWORK_LOG_LEVEL` | `info` | `debug`, `info`, `warn` or `error`. `debug` adds one line per request (method, path, status and time; never query strings, headers or bodies). |
+| `PAGEWORK_SETUP_CODE` | a new random code at each start | The code needed to create the first account (see First-run setup). Set it when you deploy without reading the logs, for example from a separate deployment repository. At least 12 letters and digits; it is no use once the first account exists. |
 | `PAGEWORK_WEB_DIR` | `apps/web/dist` next to the server | The built web app. The Docker image sets this; you shouldn't need to. |
 | `PAGEWORK_VERSION` | `development` | The version reported by `/api/instance`. Set when the Docker image is built. |
+
+## First-run setup
+
+Until the first account exists, whoever opens the server first could claim it, and a server reached through a tunnel is on the internet from the moment it starts. So creating the first account needs a **setup code** that only the person running the server can see. At start-up the server prints a line like this in its log (`docker logs pagework`):
+
+```
+Pagework isn't set up yet. Open https://scripts.example.com/?setup=K7QX-M2PA-9RTE to create the first account, or type the setup code K7QX-M2PA-9RTE there.
+```
+
+Open that address, or open the server and type the code. A new code is made each time the server starts, until setup is done. To choose the code yourself, set `PAGEWORK_SETUP_CODE`.
+
+The first account is the first instance administrator. In `personal` mode it is the only account. In `team` and `hosted` mode, setup also asks for the name of the first organisation.
+
+## Signing in
+
+- Passwords are hashed with argon2id (19 MiB, 2 passes). They must be 10 to 256 characters.
+- Sessions are kept on the server. The browser holds a random token in an HttpOnly, SameSite=Lax cookie, marked Secure and named `__Host-pagework_session` when `PAGEWORK_URL` is https. The database stores a keyed hash of the token, never the token. Sessions end after 30 days without use, and after 90 days in any case.
+- Every request that changes something must come from a page on `PAGEWORK_URL` (the Origin header is checked) and carry the session's CSRF token.
+- After 10 failed sign-ins in a row, an account locks for 15 minutes (an instance admin can unlock it sooner). Each address can try 30 times in 15 minutes; addresses with no account are limited in the same way, so the responses don't reveal which accounts exist. These limits are counted per visitor address: set `PAGEWORK_TRUST_PROXY=true` behind a reverse proxy.
 
 ## What is never logged
 

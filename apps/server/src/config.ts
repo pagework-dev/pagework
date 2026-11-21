@@ -29,6 +29,8 @@ export interface Config {
   /** Allow a plain-http PAGEWORK_URL on a host other than localhost. */
   insecureHttp: boolean;
   logLevel: "debug" | "info" | "warn" | "error";
+  /** A first-run setup code chosen in advance, instead of one in the log. */
+  setupCode: string | undefined;
 }
 
 export class ConfigError extends Error {}
@@ -154,6 +156,15 @@ export function loadConfig(env: Env = process.env): Config {
 
   const trustProxy = flag(env, "PAGEWORK_TRUST_PROXY", problems);
 
+  const setupCode = setting(env, "PAGEWORK_SETUP_CODE");
+  if (
+    setupCode !== undefined &&
+    setupCode.replace(/[^A-Za-z0-9]/g, "").length < 12
+  )
+    problems.push(
+      "PAGEWORK_SETUP_CODE must have at least 12 letters and digits.",
+    );
+
   if (problems.length > 0 || mode === undefined || url === null)
     throw new ConfigError(problems.join("\n"));
 
@@ -169,6 +180,7 @@ export function loadConfig(env: Env = process.env): Config {
     trustProxy,
     insecureHttp,
     logLevel: logLevel ?? "info",
+    setupCode,
   };
 }
 

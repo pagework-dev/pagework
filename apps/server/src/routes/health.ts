@@ -1,5 +1,6 @@
 import { sql } from "kysely";
 import { Hono } from "hono";
+import { setupRequired } from "../auth/setup.ts";
 import type { AppEnv, Deps } from "../context.ts";
 
 export const VERSION = process.env.PAGEWORK_VERSION ?? "development";
@@ -20,8 +21,13 @@ export function healthRoutes(deps: Deps): Hono<AppEnv> {
 
   // The web app asks this first. A static host (the standalone deployment)
   // has no such address, so the app knows to work without an account.
-  routes.get("/instance", (c) =>
-    c.json({ app: "pagework", mode: deps.config.mode, version: VERSION }),
+  routes.get("/instance", async (c) =>
+    c.json({
+      app: "pagework",
+      mode: deps.config.mode,
+      version: VERSION,
+      setupRequired: await setupRequired(deps.store.db),
+    }),
   );
 
   return routes;
