@@ -5,6 +5,7 @@ import {
   chosenWithoutAccount,
   findServer,
   host,
+  servedByPagework,
 } from "./lib/host.svelte.ts";
 import "./styles/tokens.css";
 import "./styles/fonts.css";
@@ -26,9 +27,16 @@ function startLocal(): void {
  * without an account on this device.
  */
 async function start(): Promise<void> {
+  // Local mode starts at once, so nothing typed waits on the network.
+  if (!servedByPagework() || chosenWithoutAccount()) {
+    startLocal();
+    // On a server, the File menu offers to sign in.
+    host.server = await findServer();
+    return;
+  }
   const server = await findServer();
   host.server = server;
-  if (server === null || chosenWithoutAccount()) {
+  if (server === null) {
     startLocal();
     return;
   }

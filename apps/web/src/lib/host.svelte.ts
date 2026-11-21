@@ -16,11 +16,17 @@ export const host = $state<{ server: Instance | null }>({ server: null });
 const WITHOUT_ACCOUNT = "pagework.withoutAccount";
 
 /**
- * Asks the address the app came from whether it is a Pagework server. A
- * static host (the standalone deployment) answers with the app's own page
- * or nothing, so the app works without an account there.
+ * A Pagework server marks the page it serves (apps/server/src/web.ts). A
+ * static host, such as the standalone deployment, doesn't, so the app
+ * opens in local mode at once and makes no request.
  */
+export function servedByPagework(): boolean {
+  return document.querySelector('meta[name="pagework-server"]') !== null;
+}
+
+/** Asks the server about itself: its mode, and whether it is set up yet. */
 export async function findServer(): Promise<Instance | null> {
+  if (!servedByPagework()) return null;
   try {
     const res = await fetch("/api/instance", {
       headers: { accept: "application/json" },
