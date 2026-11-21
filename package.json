@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "pnpm --filter @pagework/web dev",
     "build": "pnpm --filter @pagework/web build",
+    "server": "pnpm --filter @pagework/server start",
     "typecheck": "tsc --project . && pnpm --recursive typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
