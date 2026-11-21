@@ -74,3 +74,52 @@ select {
 .control.quiet:hover {
   background: var(--selection);
 }
+
+.control.primary {
+  background: var(--action);
+  border-color: var(--action);
+  color: var(--on-action);
+}
+.control.primary:hover {
+  background: var(--action);
+}
+.control.primary:disabled {
+  background: var(--chrome);
+  border-color: var(--border-control);
+  color: var(--text-muted);
+}
+
+/* Forms: sign-in, setup, settings. */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) * 2);
+}
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) / 2);
+}
+.form-field > span:first-child {
+  font-weight: 600;
+}
+.form-hint {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+.input {
+  min-height: var(--control);
+  padding: 0 var(--space);
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--input-text);
+}
+.form-error {
+  margin: 0;
+  color: var(--state-error);
+}
+.form-success {
+  margin: 0;
+}

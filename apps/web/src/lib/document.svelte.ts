@@ -23,6 +23,7 @@ import {
   type FileHandle,
 } from "../files/system.ts";
 import { currentText, editorView, loadText } from "./editor-view.ts";
+import { chooseWithoutAccount } from "./host.svelte.ts";
 import { session } from "./session.svelte.ts";
 import { templateById } from "./templates.ts";
 
@@ -195,6 +196,14 @@ export function displayName(): string {
 export async function newScript(): Promise<void> {
   if (!(await readyToReplace())) return;
   begin("", null, null);
+}
+
+/** Back to the sign-in screen of the server the app came from. */
+export async function signInInstead(): Promise<void> {
+  if (!(await readyToReplace())) return;
+  await writer.flush();
+  chooseWithoutAccount(false);
+  location.reload();
 }
 
 export async function openScript(): Promise<void> {
