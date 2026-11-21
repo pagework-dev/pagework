@@ -3,6 +3,7 @@ import type { SetupGate } from "./auth/setup.ts";
 import type { Config } from "./config.ts";
 import type { Store } from "./db/index.ts";
 import type { Logger } from "./log.ts";
+import type { Templates } from "./templates.ts";
 import type { WebApp } from "./web.ts";
 
 /** What every route can reach. Built once at start-up, or per test. */
@@ -15,6 +16,7 @@ export interface Deps {
   now: () => Date;
   /** First-run setup: the code that lets the first account be created. */
   setup: SetupGate;
+  templates: Templates;
 }
 
 export interface AppEnv {

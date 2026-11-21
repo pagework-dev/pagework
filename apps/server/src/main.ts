@@ -7,6 +7,7 @@ import { openStore } from "./db/index.ts";
 import { migrate } from "./db/migrate.ts";
 import { createLogger } from "./log.ts";
 import { VERSION } from "./routes/health.ts";
+import { loadTemplates } from "./templates.ts";
 import { webApp } from "./web.ts";
 
 async function main(): Promise<void> {
@@ -60,6 +61,7 @@ async function main(): Promise<void> {
     log,
     web,
     setup,
+    templates: loadTemplates(),
     now: () => new Date(),
   });
   const server = serve(

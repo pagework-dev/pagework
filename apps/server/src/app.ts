@@ -4,6 +4,8 @@ import { ApiError } from "./errors.ts";
 import { sameOrigin, sessions } from "./middleware.ts";
 import { authRoutes } from "./routes/auth.ts";
 import { healthRoutes } from "./routes/health.ts";
+import { projectRoutes } from "./routes/projects.ts";
+import { scriptRoutes } from "./routes/scripts.ts";
 
 /** The whole HTTP surface: the API under /api, the web app everywhere else. */
 export function createApp(deps: Deps): Hono<AppEnv> {
@@ -33,6 +35,8 @@ export function createApp(deps: Deps): Hono<AppEnv> {
   api.use(sessions(deps));
   api.route("/", healthRoutes(deps));
   api.route("/", authRoutes(deps));
+  api.route("/", projectRoutes(deps));
+  api.route("/", scriptRoutes(deps));
   api.all("*", (c) => c.json({ error: "not_found" }, 404));
   app.route("/api", api);
 

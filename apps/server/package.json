@@ -11,8 +11,11 @@
   },
   "dependencies": {
     "@hono/node-server": "2.1.8",
+    "@pagework/fountain": "workspace:*",
+    "@pagework/templates": "workspace:*",
     "hono": "4.13.17",
-    "kysely": "0.28.20"
+    "kysely": "0.28.20",
+    "yjs": "13.6.33"
   },
   "devDependencies": {
     "@types/node": "26.6.6"

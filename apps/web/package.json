@@ -21,7 +21,8 @@
     "@pagework/layout": "workspace:*",
     "@pagework/pdf": "workspace:*",
     "@pagework/templates": "workspace:*",
-    "svelte": "5.57.3"
+    "svelte": "5.57.3",
+    "yjs": "13.6.33"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

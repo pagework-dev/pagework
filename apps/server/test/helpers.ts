@@ -9,10 +9,13 @@ import type { Deps } from "../src/context.ts";
 import { openStore } from "../src/db/index.ts";
 import { migrate } from "../src/db/migrate.ts";
 import { memoryLogger } from "../src/log.ts";
+import { loadTemplates } from "../src/templates.ts";
 import { webApp } from "../src/web.ts";
 
 export const SECRET = "test-secret-that-is-long-enough-0123456789";
 export const SETUP_CODE = "ABCD-EFGH-JKLM";
+
+const templates = loadTemplates();
 
 export function testConfig(env: Record<string, string> = {}): Config {
   return loadConfig({
@@ -52,6 +55,7 @@ export async function testServer(
     web: webApp(webDir),
     now: () => clock,
     setup: setupGate(SETUP_CODE),
+    templates,
   };
   const app = createApp(deps);
   return {
@@ -154,4 +158,52 @@ export async function setUp(
   const view = await owner.refresh();
   if (view === null) throw new Error("no session after setup");
   return { owner, view };
+}
+
+/**
+ * A second organisation with its own signed-in member, made directly in
+ * the database (team mode's invitations come later), for isolation tests.
+ */
+export async function otherOrg(
+  server: TestServer,
+  role: "owner" | "admin" | "writer" | "commenter" | "reader" = "owner",
+  options: { orgId?: string; email?: string } = {},
+) {
+  const { hashPassword } = await import("../src/auth/password.ts");
+  const at = "2026-11-21T09:00:00.000Z";
+  const orgId = options.orgId ?? crypto.randomUUID();
+  const userId = crypto.randomUUID();
+  const email = options.email ?? `${userId}@example.com`;
+  const { db } = server.store;
+  if (options.orgId === undefined)
+    await db
+      .insertInto("orgs")
+      .values({ id: orgId, name: "Other", created_at: at })
+      .execute();
+  await db
+    .insertInto("users")
+    .values({
+      id: userId,
+      email,
+      display_name: "Other Person",
+      password_hash: await hashPassword("other person password"),
+      status: "active",
+      instance_role: "user",
+      must_change_password: 0,
+      failed_sign_ins: 0,
+      locked_until: null,
+      totp_secret: null,
+      last_sign_in_at: null,
+      created_at: at,
+      updated_at: at,
+    })
+    .execute();
+  await db
+    .insertInto("memberships")
+    .values({ org_id: orgId, user_id: userId, role, created_at: at })
+    .execute();
+  const person = client(server);
+  const res = await person.signIn(email, "other person password");
+  if (res.status !== 200) throw new Error("other person couldn't sign in");
+  return { person, orgId, userId };
 }
