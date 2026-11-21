@@ -101,6 +101,14 @@ const MESSAGES: Record<string, MessageKey> = {
   cross_origin: "error.cross_origin",
   csrf_token: "error.csrf_token",
   password_change_required: "error.password_change_required",
+  not_found: "error.not_found",
+  not_allowed: "error.not_allowed",
+  no_organisation: "error.no_organisation",
+  unknown_template: "error.unknown_template",
+  unknown_project: "error.unknown_project",
+  script_too_long: "error.script_too_long",
+  invalid_update: "error.invalid_update",
+  body_too_large: "error.body_too_large",
 };
 
 export function errorMessage(error: unknown): string {
