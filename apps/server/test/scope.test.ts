@@ -133,33 +133,45 @@ function sourceFiles(dir: string): string[] {
 }
 
 describe("content queries", () => {
-  // ADR 0008: all content queries go through one org-scoping helper.
+  // ADR 0008: all content queries go through one org-scoping helper. A
+  // query on a content table must be called on a scope (`scope.selectFrom`,
+  // `org.scope.updateTable`), never on the database or a transaction.
   const allowed = new Set(["scope.ts", "db/schema.ts"]);
   const tables = CONTENT_TABLES.join("|");
-  const direct = new RegExp(
-    `\\.(selectFrom|insertInto|updateTable|deleteFrom|innerJoin|leftJoin)\\(\\s*["'\`](${tables})\\b`,
+  const call = new RegExp(
+    `(\\w+)\\s*\\.\\s*(selectFrom|insertInto|updateTable|deleteFrom|replaceInto|mergeInto)\\(\\s*["'\`](${tables})\\b`,
+    "g",
   );
   const raw = new RegExp(
     `\\b(from|into|update|join)\\s+["\`]?(${tables})\\b`,
     "i",
   );
 
+  function directQueries(source: string): string[] {
+    const found: string[] = [];
+    for (const m of source.matchAll(call))
+      if (m[1] !== "scope") found.push(m[0].replace(/\s+/g, " "));
+    for (const literal of source.matchAll(/sql`[^`]*`/g))
+      if (raw.test(literal[0])) found.push(literal[0]);
+    return found;
+  }
+
   it.each(
     sourceFiles(SRC)
       .map((f) => relative(SRC, f))
       .filter((f) => !allowed.has(f) && !f.startsWith("db/migrations/")),
   )("%s doesn't query content tables directly", (file) => {
-    const text = readFileSync(join(SRC, file), "utf8");
-    // Joins are allowed on a scoped query; selectFrom etc. are not.
-    for (const line of text.split("\n")) {
-      if (/\.(innerJoin|leftJoin)\(/.test(line)) continue;
-      expect(line, file).not.toMatch(direct);
-      if (line.includes("sql`")) expect(line, file).not.toMatch(raw);
-    }
+    expect(directQueries(readFileSync(join(SRC, file), "utf8"))).toEqual([]);
   });
 
-  it("catches a direct query", () => {
-    expect('db.selectFrom("scripts")').toMatch(direct);
-    expect("sql`select * from scripts`").toMatch(raw);
+  it("catches a direct query and allows a scoped one", () => {
+    expect(directQueries('db.selectFrom("scripts")')).toHaveLength(1);
+    expect(
+      directQueries('deps.store.db\n  .updateTable("projects")'),
+    ).toHaveLength(1);
+    expect(directQueries('trx.insertInto("script_state")')).toHaveLength(1);
+    expect(directQueries("sql`select * from scripts`")).toHaveLength(1);
+    expect(directQueries('org.scope\n  .selectFrom("scripts")')).toEqual([]);
+    expect(directQueries('db.selectFrom("users")')).toEqual([]);
   });
 });
