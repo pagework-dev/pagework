@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { EditorState } from "@codemirror/state";
-  import { EditorView } from "@codemirror/view";
+  import { Compartment, EditorState } from "@codemirror/state";
+  import { EditorView, type ViewUpdate } from "@codemirror/view";
   import { onMount } from "svelte";
   import {
     elementEditing,
@@ -19,7 +19,24 @@
   import { rememberLayout, session } from "../lib/session.svelte.ts";
   import { templateById } from "../lib/templates.ts";
 
+  let {
+    onChange = () => {
+      textChanged();
+    },
+    editable = true,
+  }: {
+    /** Called for every change to the text. Local mode keeps a draft. */
+    onChange?: (update: ViewUpdate) => void;
+    /** False while editing is paused or the writer may only read. */
+    editable?: boolean;
+  } = $props();
+
   let host: HTMLDivElement;
+  const editability = new Compartment();
+  const editableExtensions = (on: boolean) => [
+    EditorView.editable.of(on),
+    EditorState.readOnly.of(!on),
+  ];
 
   /** Points to CSS pixels at 100%: 1 pt is 1/72 in, 1 px is 1/96 in. */
   const PX_PER_PT = 96 / 72;
@@ -77,10 +94,11 @@
         doc: text,
         extensions: [
           editor.extensions,
+          editability.of(editableExtensions(editable)),
           EditorView.updateListener.of((update) => {
             if (update.focusChanged)
               session.editorFocused = update.view.hasFocus;
-            if (update.docChanged) textChanged();
+            if (update.docChanged) onChange(update);
             if (
               update.docChanged ||
               update.selectionSet ||
@@ -97,6 +115,7 @@
       ),
       editor.layout.reconfigure(layoutFacet.of(session.layout)),
       editor.editing.reconfigure(elementEditing.of(!session.showFountain)),
+      editability.reconfigure(editableExtensions(editable)),
     ];
     const load = (text: string): void => {
       view.setState(createState(text));
@@ -149,7 +168,18 @@
       });
     });
 
+    const stopEditableWatch = $effect.root(() => {
+      $effect(() => {
+        const on = editable;
+        if (view.state.facet(EditorView.editable) === on) return;
+        view.dispatch({
+          effects: editability.reconfigure(editableExtensions(on)),
+        });
+      });
+    });
+
     return () => {
+      stopEditableWatch();
       stopModeWatch();
       stopTemplateWatch();
       resize.disconnect();

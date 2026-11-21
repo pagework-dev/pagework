@@ -8,6 +8,7 @@
   import Toolbar from "./components/Toolbar.svelte";
   import { t } from "./i18n/index.ts";
   import {
+    doc,
     displayName,
     newScript,
     openScript,
@@ -54,7 +55,17 @@
       <Editor />
     </main>
   </div>
-  <StatusBar />
+  <StatusBar
+    save={doc.saveState === "empty"
+      ? null
+      : {
+          label: t(`save.${doc.saveState}`),
+          warning: doc.saveState === "unsaved",
+        }}
+    busy={doc.busy === null
+      ? null
+      : t(doc.busy === "pdf" ? "busy.pdf" : "busy.print")}
+  />
 </div>
 <SaveQuestion />
 <ElementBar />

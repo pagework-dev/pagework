@@ -1,8 +1,17 @@
 <script lang="ts">
   import { t } from "../i18n/index.ts";
-  import { doc } from "../lib/document.svelte.ts";
   import { kindLabel } from "../lib/labels.ts";
   import { session } from "../lib/session.svelte.ts";
+
+  let {
+    save = null,
+    busy = null,
+  }: {
+    /** Where the script is kept: "Saved", "Saving…" and so on. */
+    save?: { label: string; warning: boolean } | null;
+    /** Work in progress, such as exporting. */
+    busy?: string | null;
+  } = $props();
 
   const pages = $derived.by(() => {
     if (session.pageCount === null) return t("status.pageCounting");
@@ -30,13 +39,11 @@
   </span>
   <span>{kindLabel(session.currentKind)}</span>
   <span class="spacer"></span>
-  {#if doc.busy !== null}
-    <span>{t(doc.busy === "pdf" ? "busy.pdf" : "busy.print")}</span>
+  {#if busy !== null}
+    <span>{busy}</span>
   {/if}
-  {#if doc.saveState !== "empty"}
-    <span class:warning={doc.saveState === "unsaved"}>
-      {t(`save.${doc.saveState}`)}
-    </span>
+  {#if save !== null}
+    <span class:warning={save.warning}>{save.label}</span>
   {/if}
 </footer>
 

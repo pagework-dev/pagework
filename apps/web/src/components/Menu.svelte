@@ -2,8 +2,18 @@
   import { t } from "../i18n/index.ts";
   import type { MenuItem } from "../lib/menu.ts";
 
-  let { label, id, items }: { label: string; id: string; items: MenuItem[] } =
-    $props();
+  let {
+    label,
+    id,
+    items,
+    text = null,
+  }: {
+    label: string;
+    id: string;
+    items: MenuItem[];
+    /** Shorter text on the button; `label` stays its accessible name. */
+    text?: string | null;
+  } = $props();
 
   let open = $state(false);
   /** The toolbar scrolls sideways on narrow screens, so the menu is placed on the page, under its button. */
@@ -19,7 +29,12 @@
 
   function show(focusLast = false): void {
     const rect = button.getBoundingClientRect();
-    place = { top: rect.bottom + 4, left: Math.max(8, rect.left) };
+    // 16rem wide: keep it inside the window when the button is near the edge.
+    const width = 16 * 16 + 8;
+    place = {
+      top: rect.bottom + 4,
+      left: Math.max(8, Math.min(rect.left, window.innerWidth - width)),
+    };
     open = true;
     queueMicrotask(() => {
       const list = entries();
@@ -84,10 +99,11 @@
     aria-haspopup="menu"
     aria-expanded={open}
     aria-controls={id}
+    aria-label={text === null ? undefined : label}
     onclick={() => (open ? hide(false) : show())}
     onkeydown={onButtonKey}
   >
-    {label}
+    {text ?? label}
   </button>
   {#if open}
     <div
